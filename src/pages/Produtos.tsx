@@ -1,0 +1,373 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Plus, Edit, Save, X } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+
+interface Produto {
+  id: string;
+  nome_produto: string;
+  plano: string;
+  preco_de_venda: number;
+  comissao_percentual: number;
+  preco_final: number;
+  entrada_valor: number;
+  valor_financiado: number;
+  parcela_valor: number;
+  parcelas_qtd: number;
+  valor_total_financiado: number;
+  ativo: boolean;
+}
+
+const Produtos = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editData, setEditData] = useState<Partial<Produto>>({});
+  const [showNewForm, setShowNewForm] = useState(false);
+
+  useEffect(() => {
+    checkAuth();
+    fetchProdutos();
+  }, []);
+
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate("/auth");
+    }
+  };
+
+  const fetchProdutos = async () => {
+    const { data } = await supabase
+      .from("produtos")
+      .select("*")
+      .order("nome_produto");
+    setProdutos(data || []);
+  };
+
+  const handleEdit = (produto: Produto) => {
+    setEditingId(produto.id);
+    setEditData(produto);
+  };
+
+  const handleSave = async (id: string) => {
+    const { error } = await supabase
+      .from("produtos")
+      .update(editData)
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Erro ao atualizar",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({ title: "Produto atualizado com sucesso!" });
+      setEditingId(null);
+      fetchProdutos();
+    }
+  };
+
+  const handleToggleAtivo = async (id: string, ativo: boolean) => {
+    const { error } = await supabase
+      .from("produtos")
+      .update({ ativo })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Erro ao atualizar status",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      fetchProdutos();
+    }
+  };
+
+  const handleCreate = async () => {
+    if (!editData.nome_produto || !editData.preco_final) {
+      toast({
+        title: "Preencha os campos obrigatórios",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from("produtos")
+      .insert([{
+        nome_produto: editData.nome_produto,
+        plano: editData.plano || "PLANO 40",
+        preco_de_venda: editData.preco_de_venda || editData.preco_final,
+        comissao_percentual: editData.comissao_percentual || 0.015,
+        preco_final: editData.preco_final,
+        entrada_valor: editData.entrada_valor || 0,
+        valor_financiado: editData.valor_financiado || 0,
+        parcela_valor: editData.parcela_valor || 0,
+        parcelas_qtd: editData.parcelas_qtd || 24,
+        valor_total_financiado: editData.valor_total_financiado || 0,
+        ativo: true,
+      }]);
+
+    if (error) {
+      toast({
+        title: "Erro ao criar produto",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({ title: "Produto criado com sucesso!" });
+      setShowNewForm(false);
+      setEditData({});
+      fetchProdutos();
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-card">
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Button variant="ghost" onClick={() => navigate("/")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+          <h1 className="text-2xl font-bold">Gerenciar Produtos</h1>
+          <Button onClick={() => setShowNewForm(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Novo Produto
+          </Button>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        {/* Formulário Novo Produto */}
+        {showNewForm && (
+          <Card className="mb-6 border-primary/30">
+            <CardHeader>
+              <CardTitle>Novo Produto</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Nome do Produto *</Label>
+                  <Input
+                    value={editData.nome_produto || ""}
+                    onChange={(e) => setEditData({ ...editData, nome_produto: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Plano</Label>
+                  <Input
+                    value={editData.plano || "PLANO 40"}
+                    onChange={(e) => setEditData({ ...editData, plano: e.target.value })}
+                  />
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <Label>Preço de Venda *</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={editData.preco_de_venda || ""}
+                    onChange={(e) => setEditData({ ...editData, preco_de_venda: parseFloat(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>Comissão %</Label>
+                  <Input
+                    type="number"
+                    step="0.0001"
+                    value={editData.comissao_percentual || ""}
+                    onChange={(e) => setEditData({ ...editData, comissao_percentual: parseFloat(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>Preço Final *</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={editData.preco_final || ""}
+                    onChange={(e) => setEditData({ ...editData, preco_final: parseFloat(e.target.value) })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <Label>Entrada</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={editData.entrada_valor || ""}
+                    onChange={(e) => setEditData({ ...editData, entrada_valor: parseFloat(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>Valor Financiado</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={editData.valor_financiado || ""}
+                    onChange={(e) => setEditData({ ...editData, valor_financiado: parseFloat(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>Parcela Valor</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={editData.parcela_valor || ""}
+                    onChange={(e) => setEditData({ ...editData, parcela_valor: parseFloat(e.target.value) })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Quantidade Parcelas</Label>
+                  <Input
+                    type="number"
+                    value={editData.parcelas_qtd || ""}
+                    onChange={(e) => setEditData({ ...editData, parcelas_qtd: parseInt(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>Total Financiado</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={editData.valor_total_financiado || ""}
+                    onChange={(e) => setEditData({ ...editData, valor_total_financiado: parseFloat(e.target.value) })}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button onClick={handleCreate}>Criar Produto</Button>
+                <Button variant="outline" onClick={() => { setShowNewForm(false); setEditData({}); }}>
+                  Cancelar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Lista de Produtos */}
+        <div className="grid gap-4">
+          {produtos.map((produto) => (
+            <Card key={produto.id} className={!produto.ativo ? "opacity-60" : ""}>
+              <CardContent className="p-6">
+                {editingId === produto.id ? (
+                  <div className="grid gap-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Nome do Produto</Label>
+                        <Input
+                          value={editData.nome_produto || ""}
+                          onChange={(e) => setEditData({ ...editData, nome_produto: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <Label>Preço Final</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={editData.preco_final || ""}
+                          onChange={(e) => setEditData({ ...editData, preco_final: parseFloat(e.target.value) })}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div>
+                        <Label>Entrada</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={editData.entrada_valor || ""}
+                          onChange={(e) => setEditData({ ...editData, entrada_valor: parseFloat(e.target.value) })}
+                        />
+                      </div>
+                      <div>
+                        <Label>Parcela</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={editData.parcela_valor || ""}
+                          onChange={(e) => setEditData({ ...editData, parcela_valor: parseFloat(e.target.value) })}
+                        />
+                      </div>
+                      <div>
+                        <Label>Qtd Parcelas</Label>
+                        <Input
+                          type="number"
+                          value={editData.parcelas_qtd || ""}
+                          onChange={(e) => setEditData({ ...editData, parcelas_qtd: parseInt(e.target.value) })}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button onClick={() => handleSave(produto.id)}>
+                        <Save className="mr-2 h-4 w-4" />
+                        Salvar
+                      </Button>
+                      <Button variant="outline" onClick={() => setEditingId(null)}>
+                        <X className="mr-2 h-4 w-4" />
+                        Cancelar
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1 grid md:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Produto</p>
+                        <p className="font-semibold text-lg">{produto.nome_produto}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Preço Final</p>
+                        <p className="font-semibold text-primary">
+                          R$ {produto.preco_final.toFixed(2)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Parcelas</p>
+                        <p className="font-semibold">
+                          {produto.parcelas_qtd}x de R$ {produto.parcela_valor.toFixed(2)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={produto.ativo}
+                          onCheckedChange={(checked) => handleToggleAtivo(produto.id, checked)}
+                        />
+                        <span className="text-sm">{produto.ativo ? "Ativo" : "Inativo"}</span>
+                      </div>
+                    </div>
+                    <Button variant="ghost" onClick={() => handleEdit(produto)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default Produtos;
