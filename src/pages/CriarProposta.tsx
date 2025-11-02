@@ -60,6 +60,7 @@ const CriarProposta = () => {
   const [planoEscolhido, setPlanoEscolhido] = useState<"30" | "40" | "50">("40");
   const [comissaoEscolhida, setComissaoEscolhida] = useState<"0.005" | "0.01" | "0.015">("0.01");
   const [numeroParcelas, setNumeroParcelas] = useState<12 | 18 | 24>(24);
+  const [parcelasCartaoSelecionadas, setParcelasCartaoSelecionadas] = useState<number>(1);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -191,6 +192,37 @@ const CriarProposta = () => {
     const markupKey = `plano_${planoEscolhido}_markup_percentual` as keyof ParametrosGlobais;
     const markupUtilizado = parametros[markupKey] as number;
 
+    // Se for cartão, usar os valores da opção de cartão selecionada
+    let dadosParaProposta;
+    if (tipoPagamento === "cartao") {
+      const opcaoCartao = opcoesCartao.find(o => o.parcelas === parcelasCartaoSelecionadas);
+      if (!opcaoCartao) return;
+      
+      dadosParaProposta = {
+        entrada_valor: 0,
+        entrada_reais: 0,
+        numero_de_parcelas: opcaoCartao.parcelas,
+        parcelas_qtd: opcaoCartao.parcelas,
+        parcela_valor: opcaoCartao.valorParcela,
+        valor_da_parcela: opcaoCartao.valorParcela,
+        total_financiado: opcaoCartao.valorTotal,
+        percentual_entrada_utilizado: 0,
+        juros_parcelamento_mensal_usado: 0,
+      };
+    } else {
+      dadosParaProposta = {
+        entrada_valor: financiamento.entrada,
+        entrada_reais: financiamento.entrada,
+        numero_de_parcelas: numeroParcelas,
+        parcelas_qtd: financiamento.parcelas,
+        parcela_valor: financiamento.parcelaValor,
+        valor_da_parcela: financiamento.parcelaValor,
+        total_financiado: financiamento.totalFinanciado,
+        percentual_entrada_utilizado: parametros.percentual_entrada_padrao,
+        juros_parcelamento_mensal_usado: parametros.juros_parcelamento_mensal,
+      };
+    }
+
     const { data, error } = await supabase
       .from("propostas")
       .insert({
@@ -204,15 +236,7 @@ const CriarProposta = () => {
         markup_do_plano_percentual: markupUtilizado,
         comissao_percentual_escolhida: parseFloat(comissaoEscolhida),
         preco_final_aplicado: financiamento.precoFinal,
-        percentual_entrada_utilizado: parametros.percentual_entrada_padrao,
-        entrada_valor: financiamento.entrada,
-        entrada_reais: financiamento.entrada,
-        numero_de_parcelas: numeroParcelas,
-        parcelas_qtd: financiamento.parcelas,
-        parcela_valor: financiamento.parcelaValor,
-        valor_da_parcela: financiamento.parcelaValor,
-        total_financiado: financiamento.totalFinanciado,
-        juros_parcelamento_mensal_usado: parametros.juros_parcelamento_mensal,
+        ...dadosParaProposta,
         comissao_percentual: parseFloat(comissaoEscolhida),
         comissao_valor: comissaoValor,
         link_publico: linkPublico,
@@ -440,7 +464,12 @@ const CriarProposta = () => {
                             {opcoesCartao.map((opcao) => (
                               <div 
                                 key={opcao.parcelas}
-                                className="flex justify-between items-center p-3 rounded-lg bg-background border border-border hover:border-primary transition-colors"
+                                onClick={() => setParcelasCartaoSelecionadas(opcao.parcelas)}
+                                className={`flex justify-between items-center p-3 rounded-lg cursor-pointer transition-all ${
+                                  parcelasCartaoSelecionadas === opcao.parcelas
+                                    ? "bg-primary/20 border-2 border-primary"
+                                    : "bg-background border border-border hover:border-primary"
+                                }`}
                               >
                                 <span className="font-medium">{opcao.parcelas}x</span>
                                 <div className="text-right">
@@ -457,7 +486,7 @@ const CriarProposta = () => {
                             onClick={(e) => handleSubmit(e, "cartao")}
                             disabled={loading || !clienteNome}
                           >
-                            {loading ? "Gerando..." : "Gerar Proposta com Cartão"}
+                            {loading ? "Gerando..." : `Gerar Proposta ${parcelasCartaoSelecionadas}x no Cartão`}
                           </Button>
                         </TabsContent>
                       </Tabs>
