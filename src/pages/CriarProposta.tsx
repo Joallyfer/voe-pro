@@ -13,6 +13,7 @@ import { ArrowLeft, Calculator } from "lucide-react";
 interface Produto {
   id: string;
   nome_produto: string;
+  custo_base: number;
   preco_de_venda: number;
   comissao_percentual: number;
   preco_final: number;
@@ -38,6 +39,9 @@ interface ParametrosGlobais {
   taxa_cartao_12x_percentual: number;
   percentual_entrada_padrao: number;
   juros_parcelamento_mensal: number;
+  plano_30_markup_percentual: number;
+  plano_40_markup_percentual: number;
+  plano_50_markup_percentual: number;
 }
 
 const CriarProposta = () => {
@@ -53,7 +57,9 @@ const CriarProposta = () => {
   const [clienteNome, setClienteNome] = useState("");
   const [clienteTelefone, setClienteTelefone] = useState("");
   const [clienteEmail, setClienteEmail] = useState("");
-  const [precoFinalAplicado, setPrecoFinalAplicado] = useState(0);
+  const [planoEscolhido, setPlanoEscolhido] = useState<"30" | "40" | "50">("40");
+  const [comissaoEscolhida, setComissaoEscolhida] = useState<"0.005" | "0.01" | "0.015">("0.01");
+  const [numeroParcelas, setNumeroParcelas] = useState<12 | 18 | 24>(24);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -74,7 +80,6 @@ const CriarProposta = () => {
       const produto = produtos.find(p => p.id === selectedProdutoId);
       if (produto) {
         setProdutoSelecionado(produto);
-        setPrecoFinalAplicado(produto.preco_final);
       }
     }
   }, [selectedProdutoId, produtos]);
@@ -103,24 +108,38 @@ const CriarProposta = () => {
     setParametros(data);
   };
 
+  const calcularPrecoFinal = () => {
+    if (!produtoSelecionado || !parametros) return 0;
+
+    const markupKey = `plano_${planoEscolhido}_markup_percentual` as keyof ParametrosGlobais;
+    const markup = parametros[markupKey] as number;
+    
+    const precoComLucro = produtoSelecionado.custo_base * (1 + markup);
+    const valorComissao = precoComLucro * parseFloat(comissaoEscolhida);
+    const precoFinal = precoComLucro + valorComissao;
+    
+    return precoFinal;
+  };
+
   const calcularFinanciamento = () => {
     if (!produtoSelecionado || !parametros) return null;
 
-    const entrada = precoFinalAplicado * parametros.percentual_entrada_padrao;
-    const valorFinanciado = precoFinalAplicado - entrada;
-    const parcelas = produtoSelecionado.parcelas_qtd;
+    const precoFinal = calcularPrecoFinal();
+    const entrada = precoFinal * parametros.percentual_entrada_padrao;
+    const valorFinanciado = precoFinal - entrada;
     const jurosMensal = parametros.juros_parcelamento_mensal;
 
     // Cálculo com juros compostos
-    const fatorJuros = Math.pow(1 + jurosMensal, parcelas);
+    const fatorJuros = Math.pow(1 + jurosMensal, numeroParcelas);
     const parcelaValor = (valorFinanciado * jurosMensal * fatorJuros) / (fatorJuros - 1);
-    const totalFinanciado = parcelaValor * parcelas;
+    const totalFinanciado = parcelaValor * numeroParcelas;
 
     return {
+      precoFinal,
       entrada,
       valorFinanciado,
       parcelaValor,
-      parcelas,
+      parcelas: numeroParcelas,
       totalFinanciado,
     };
   };
@@ -128,11 +147,12 @@ const CriarProposta = () => {
   const calcularCartao = () => {
     if (!parametros) return [];
 
+    const precoFinal = calcularPrecoFinal();
     const opcoes = [];
     for (let i = 1; i <= 12; i++) {
       const taxaKey = `taxa_cartao_${i}x_percentual` as keyof ParametrosGlobais;
       const taxa = parametros[taxaKey] as number;
-      const totalCartao = precoFinalAplicado * (1 + taxa);
+      const totalCartao = precoFinal * (1 + taxa);
       const parcelaCartao = totalCartao / i;
       opcoes.push({
         parcelas: i,
@@ -151,7 +171,7 @@ const CriarProposta = () => {
   const handleSubmit = async (e: React.FormEvent, tipoPagamento: "financiamento" | "cartao") => {
     e.preventDefault();
     
-    if (!produtoSelecionado) {
+    if (!produtoSelecionado || !parametros) {
       toast({
         title: "Erro",
         description: "Selecione um produto",
@@ -165,8 +185,11 @@ const CriarProposta = () => {
     const financiamento = calcularFinanciamento();
     if (!financiamento) return;
 
-    const comissaoValor = precoFinalAplicado * produtoSelecionado.comissao_percentual;
+    const comissaoValor = financiamento.precoFinal * parseFloat(comissaoEscolhida);
     const linkPublico = gerarLinkPublico();
+    
+    const markupKey = `plano_${planoEscolhido}_markup_percentual` as keyof ParametrosGlobais;
+    const markupUtilizado = parametros[markupKey] as number;
 
     const { data, error } = await supabase
       .from("propostas")
@@ -176,12 +199,21 @@ const CriarProposta = () => {
         cliente_email: clienteEmail,
         produto_id: produtoSelecionado.id,
         produto_nome: produtoSelecionado.nome_produto,
-        preco_final_aplicado: precoFinalAplicado,
+        custo_base_snapshot: produtoSelecionado.custo_base,
+        plano_escolhido: `PLANO ${planoEscolhido}`,
+        markup_do_plano_percentual: markupUtilizado,
+        comissao_percentual_escolhida: parseFloat(comissaoEscolhida),
+        preco_final_aplicado: financiamento.precoFinal,
+        percentual_entrada_utilizado: parametros.percentual_entrada_padrao,
         entrada_valor: financiamento.entrada,
+        entrada_reais: financiamento.entrada,
+        numero_de_parcelas: numeroParcelas,
         parcelas_qtd: financiamento.parcelas,
         parcela_valor: financiamento.parcelaValor,
+        valor_da_parcela: financiamento.parcelaValor,
         total_financiado: financiamento.totalFinanciado,
-        comissao_percentual: produtoSelecionado.comissao_percentual,
+        juros_parcelamento_mensal_usado: parametros.juros_parcelamento_mensal,
+        comissao_percentual: parseFloat(comissaoEscolhida),
         comissao_valor: comissaoValor,
         link_publico: linkPublico,
         tipo_pagamento: tipoPagamento,
@@ -284,24 +316,52 @@ const CriarProposta = () => {
                   <SelectContent>
                     {produtos.map((produto) => (
                       <SelectItem key={produto.id} value={produto.id}>
-                        {produto.nome_produto} - R$ {produto.preco_final.toFixed(2)}
+                        {produto.nome_produto}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {produtoSelecionado && (
+              {produtoSelecionado && parametros && (
                 <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="plano">Plano Comercial</Label>
+                      <Select value={planoEscolhido} onValueChange={(v) => setPlanoEscolhido(v as "30" | "40" | "50")}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="30">Plano 30 ({(parametros.plano_30_markup_percentual * 100).toFixed(0)}%)</SelectItem>
+                          <SelectItem value="40">Plano 40 ({(parametros.plano_40_markup_percentual * 100).toFixed(0)}%)</SelectItem>
+                          <SelectItem value="50">Plano 50 ({(parametros.plano_50_markup_percentual * 100).toFixed(0)}%)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="comissao">Comissão do Vendedor</Label>
+                      <Select value={comissaoEscolhida} onValueChange={(v) => setComissaoEscolhida(v as "0.005" | "0.01" | "0.015")}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0.005">0,5%</SelectItem>
+                          <SelectItem value="0.01">1,0%</SelectItem>
+                          <SelectItem value="0.015">1,5%</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
                   <div className="grid gap-2">
-                    <Label htmlFor="preco">Preço Final (ajustável)</Label>
-                    <Input
-                      id="preco"
-                      type="number"
-                      step="0.01"
-                      value={precoFinalAplicado}
-                      onChange={(e) => setPrecoFinalAplicado(parseFloat(e.target.value) || 0)}
-                    />
+                    <Label>Preço Final Calculado (somente leitura)</Label>
+                    <div className="p-3 bg-secondary/30 rounded-md">
+                      <p className="text-2xl font-bold text-primary">
+                        R$ {calcularPrecoFinal().toFixed(2)}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Simulações */}
@@ -322,6 +382,20 @@ const CriarProposta = () => {
                         <TabsContent value="financiamento" className="space-y-4">
                           {financiamento && (
                             <>
+                              <div className="grid gap-2">
+                                <Label htmlFor="num-parcelas">Número de Parcelas</Label>
+                                <Select value={numeroParcelas.toString()} onValueChange={(v) => setNumeroParcelas(parseInt(v) as 12 | 18 | 24)}>
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="12">12x</SelectItem>
+                                    <SelectItem value="18">18x</SelectItem>
+                                    <SelectItem value="24">24x</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
                                   <p className="text-sm text-muted-foreground">Entrada ({(parametros?.percentual_entrada_padrao || 0) * 100}%)</p>

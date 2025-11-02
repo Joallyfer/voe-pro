@@ -27,6 +27,9 @@ interface ParametrosGlobais {
   juros_parcelamento_mensal: number;
   politica_arredondamento: string;
   observacao_condicoes_comerciais: string;
+  plano_30_markup_percentual: number;
+  plano_40_markup_percentual: number;
+  plano_50_markup_percentual: number;
 }
 
 const Configuracoes = () => {
@@ -113,6 +116,55 @@ const Configuracoes = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
+        {/* Planos Comerciais */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Planos Comerciais</CardTitle>
+            <CardDescription>Configure os markups de cada plano sobre o custo base</CardDescription>
+          </CardHeader>
+          <CardContent className="grid md:grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="plano-30">Plano 30 - Markup</Label>
+              <Input
+                id="plano-30"
+                type="number"
+                step="0.01"
+                value={parametros.plano_30_markup_percentual}
+                onChange={(e) => updateParametro("plano_30_markup_percentual", parseFloat(e.target.value))}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {(parametros.plano_30_markup_percentual * 100).toFixed(2)}%
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="plano-40">Plano 40 - Markup</Label>
+              <Input
+                id="plano-40"
+                type="number"
+                step="0.01"
+                value={parametros.plano_40_markup_percentual}
+                onChange={(e) => updateParametro("plano_40_markup_percentual", parseFloat(e.target.value))}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {(parametros.plano_40_markup_percentual * 100).toFixed(2)}%
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="plano-50">Plano 50 - Markup</Label>
+              <Input
+                id="plano-50"
+                type="number"
+                step="0.01"
+                value={parametros.plano_50_markup_percentual}
+                onChange={(e) => updateParametro("plano_50_markup_percentual", parseFloat(e.target.value))}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {(parametros.plano_50_markup_percentual * 100).toFixed(2)}%
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Taxas de Cartão */}
         <Card>
           <CardHeader>

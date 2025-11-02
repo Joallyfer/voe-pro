@@ -21,6 +21,9 @@ export type Database = {
           juros_parcelamento_mensal: number
           observacao_condicoes_comerciais: string | null
           percentual_entrada_padrao: number
+          plano_30_markup_percentual: number
+          plano_40_markup_percentual: number
+          plano_50_markup_percentual: number
           politica_arredondamento: string | null
           taxa_cartao_10x_percentual: number
           taxa_cartao_11x_percentual: number
@@ -42,6 +45,9 @@ export type Database = {
           juros_parcelamento_mensal?: number
           observacao_condicoes_comerciais?: string | null
           percentual_entrada_padrao?: number
+          plano_30_markup_percentual?: number
+          plano_40_markup_percentual?: number
+          plano_50_markup_percentual?: number
           politica_arredondamento?: string | null
           taxa_cartao_10x_percentual?: number
           taxa_cartao_11x_percentual?: number
@@ -63,6 +69,9 @@ export type Database = {
           juros_parcelamento_mensal?: number
           observacao_condicoes_comerciais?: string | null
           percentual_entrada_padrao?: number
+          plano_30_markup_percentual?: number
+          plano_40_markup_percentual?: number
+          plano_50_markup_percentual?: number
           politica_arredondamento?: string | null
           taxa_cartao_10x_percentual?: number
           taxa_cartao_11x_percentual?: number
@@ -85,6 +94,7 @@ export type Database = {
           ativo: boolean
           comissao_percentual: number
           created_at: string | null
+          custo_base: number
           entrada_valor: number
           id: string
           nome_produto: string
@@ -101,6 +111,7 @@ export type Database = {
           ativo?: boolean
           comissao_percentual: number
           created_at?: string | null
+          custo_base?: number
           entrada_valor: number
           id?: string
           nome_produto: string
@@ -117,6 +128,7 @@ export type Database = {
           ativo?: boolean
           comissao_percentual?: number
           created_at?: string | null
+          custo_base?: number
           entrada_valor?: number
           id?: string
           nome_produto?: string
@@ -137,14 +149,22 @@ export type Database = {
           cliente_nome: string
           cliente_telefone: string | null
           comissao_percentual: number
+          comissao_percentual_escolhida: number | null
           comissao_valor: number
           created_at: string | null
+          custo_base_snapshot: number | null
           data_criacao: string | null
+          entrada_reais: number | null
           entrada_valor: number
           id: string
+          juros_parcelamento_mensal_usado: number | null
           link_publico: string
+          markup_do_plano_percentual: number | null
+          numero_de_parcelas: number | null
           parcela_valor: number
           parcelas_qtd: number
+          percentual_entrada_utilizado: number | null
+          plano_escolhido: string | null
           preco_final_aplicado: number
           produto_id: string | null
           produto_nome: string
@@ -153,20 +173,29 @@ export type Database = {
           total_financiado: number
           updated_at: string | null
           validade_dias: number | null
+          valor_da_parcela: number | null
         }
         Insert: {
           cliente_email?: string | null
           cliente_nome: string
           cliente_telefone?: string | null
           comissao_percentual: number
+          comissao_percentual_escolhida?: number | null
           comissao_valor: number
           created_at?: string | null
+          custo_base_snapshot?: number | null
           data_criacao?: string | null
+          entrada_reais?: number | null
           entrada_valor: number
           id?: string
+          juros_parcelamento_mensal_usado?: number | null
           link_publico: string
+          markup_do_plano_percentual?: number | null
+          numero_de_parcelas?: number | null
           parcela_valor: number
           parcelas_qtd: number
+          percentual_entrada_utilizado?: number | null
+          plano_escolhido?: string | null
           preco_final_aplicado: number
           produto_id?: string | null
           produto_nome: string
@@ -175,20 +204,29 @@ export type Database = {
           total_financiado: number
           updated_at?: string | null
           validade_dias?: number | null
+          valor_da_parcela?: number | null
         }
         Update: {
           cliente_email?: string | null
           cliente_nome?: string
           cliente_telefone?: string | null
           comissao_percentual?: number
+          comissao_percentual_escolhida?: number | null
           comissao_valor?: number
           created_at?: string | null
+          custo_base_snapshot?: number | null
           data_criacao?: string | null
+          entrada_reais?: number | null
           entrada_valor?: number
           id?: string
+          juros_parcelamento_mensal_usado?: number | null
           link_publico?: string
+          markup_do_plano_percentual?: number | null
+          numero_de_parcelas?: number | null
           parcela_valor?: number
           parcelas_qtd?: number
+          percentual_entrada_utilizado?: number | null
+          plano_escolhido?: string | null
           preco_final_aplicado?: number
           produto_id?: string | null
           produto_nome?: string
@@ -197,6 +235,7 @@ export type Database = {
           total_financiado?: number
           updated_at?: string | null
           validade_dias?: number | null
+          valor_da_parcela?: number | null
         }
         Relationships: [
           {

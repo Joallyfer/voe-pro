@@ -13,6 +13,7 @@ interface Produto {
   id: string;
   nome_produto: string;
   plano: string;
+  custo_base: number;
   preco_de_venda: number;
   comissao_percentual: number;
   preco_final: number;
@@ -107,6 +108,7 @@ const Produtos = () => {
       .insert([{
         nome_produto: editData.nome_produto,
         plano: editData.plano || "PLANO 40",
+        custo_base: editData.custo_base || 0,
         preco_de_venda: editData.preco_de_venda || editData.preco_final,
         comissao_percentual: editData.comissao_percentual || 0.015,
         preco_final: editData.preco_final,
@@ -156,7 +158,7 @@ const Produtos = () => {
               <CardTitle>Novo Produto</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <Label>Nome do Produto *</Label>
                   <Input
@@ -169,6 +171,15 @@ const Produtos = () => {
                   <Input
                     value={editData.plano || "PLANO 40"}
                     onChange={(e) => setEditData({ ...editData, plano: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Custo Base *</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={editData.custo_base || ""}
+                    onChange={(e) => setEditData({ ...editData, custo_base: parseFloat(e.target.value) })}
                   />
                 </div>
               </div>
