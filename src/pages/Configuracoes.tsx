@@ -23,6 +23,18 @@ interface ParametrosGlobais {
   taxa_cartao_10x_percentual: number;
   taxa_cartao_11x_percentual: number;
   taxa_cartao_12x_percentual: number;
+  taxa_cartao_13x_percentual: number;
+  taxa_cartao_14x_percentual: number;
+  taxa_cartao_15x_percentual: number;
+  taxa_cartao_16x_percentual: number;
+  taxa_cartao_17x_percentual: number;
+  taxa_cartao_18x_percentual: number;
+  taxa_cartao_19x_percentual: number;
+  taxa_cartao_20x_percentual: number;
+  taxa_cartao_21x_percentual: number;
+  taxa_cartao_22x_percentual: number;
+  taxa_cartao_23x_percentual: number;
+  taxa_cartao_24x_percentual: number;
   percentual_entrada_padrao: number;
   juros_parcelamento_mensal: number;
   politica_arredondamento: string;
@@ -172,7 +184,7 @@ const Configuracoes = () => {
             <CardDescription>Percentuais para cada modalidade de parcelamento</CardDescription>
           </CardHeader>
           <CardContent className="grid md:grid-cols-3 gap-4">
-            {[...Array(12)].map((_, i) => {
+            {[...Array(24)].map((_, i) => {
               const parcela = i + 1;
               const campo = `taxa_cartao_${parcela}x_percentual` as keyof ParametrosGlobais;
               return (

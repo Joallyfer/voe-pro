@@ -37,6 +37,18 @@ interface ParametrosGlobais {
   taxa_cartao_10x_percentual: number;
   taxa_cartao_11x_percentual: number;
   taxa_cartao_12x_percentual: number;
+  taxa_cartao_13x_percentual: number;
+  taxa_cartao_14x_percentual: number;
+  taxa_cartao_15x_percentual: number;
+  taxa_cartao_16x_percentual: number;
+  taxa_cartao_17x_percentual: number;
+  taxa_cartao_18x_percentual: number;
+  taxa_cartao_19x_percentual: number;
+  taxa_cartao_20x_percentual: number;
+  taxa_cartao_21x_percentual: number;
+  taxa_cartao_22x_percentual: number;
+  taxa_cartao_23x_percentual: number;
+  taxa_cartao_24x_percentual: number;
   percentual_entrada_padrao: number;
   juros_parcelamento_mensal: number;
   plano_30_markup_percentual: number;
@@ -150,7 +162,7 @@ const CriarProposta = () => {
 
     const precoFinal = calcularPrecoFinal();
     const opcoes = [];
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 24; i++) {
       const taxaKey = `taxa_cartao_${i}x_percentual` as keyof ParametrosGlobais;
       const taxa = parametros[taxaKey] as number;
       const totalCartao = precoFinal * (1 + taxa);

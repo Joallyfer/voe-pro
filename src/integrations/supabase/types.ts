@@ -28,7 +28,19 @@ export type Database = {
           taxa_cartao_10x_percentual: number
           taxa_cartao_11x_percentual: number
           taxa_cartao_12x_percentual: number
+          taxa_cartao_13x_percentual: number
+          taxa_cartao_14x_percentual: number
+          taxa_cartao_15x_percentual: number
+          taxa_cartao_16x_percentual: number
+          taxa_cartao_17x_percentual: number
+          taxa_cartao_18x_percentual: number
+          taxa_cartao_19x_percentual: number
           taxa_cartao_1x_percentual: number
+          taxa_cartao_20x_percentual: number
+          taxa_cartao_21x_percentual: number
+          taxa_cartao_22x_percentual: number
+          taxa_cartao_23x_percentual: number
+          taxa_cartao_24x_percentual: number
           taxa_cartao_2x_percentual: number
           taxa_cartao_3x_percentual: number
           taxa_cartao_4x_percentual: number
@@ -52,7 +64,19 @@ export type Database = {
           taxa_cartao_10x_percentual?: number
           taxa_cartao_11x_percentual?: number
           taxa_cartao_12x_percentual?: number
+          taxa_cartao_13x_percentual?: number
+          taxa_cartao_14x_percentual?: number
+          taxa_cartao_15x_percentual?: number
+          taxa_cartao_16x_percentual?: number
+          taxa_cartao_17x_percentual?: number
+          taxa_cartao_18x_percentual?: number
+          taxa_cartao_19x_percentual?: number
           taxa_cartao_1x_percentual?: number
+          taxa_cartao_20x_percentual?: number
+          taxa_cartao_21x_percentual?: number
+          taxa_cartao_22x_percentual?: number
+          taxa_cartao_23x_percentual?: number
+          taxa_cartao_24x_percentual?: number
           taxa_cartao_2x_percentual?: number
           taxa_cartao_3x_percentual?: number
           taxa_cartao_4x_percentual?: number
@@ -76,7 +100,19 @@ export type Database = {
           taxa_cartao_10x_percentual?: number
           taxa_cartao_11x_percentual?: number
           taxa_cartao_12x_percentual?: number
+          taxa_cartao_13x_percentual?: number
+          taxa_cartao_14x_percentual?: number
+          taxa_cartao_15x_percentual?: number
+          taxa_cartao_16x_percentual?: number
+          taxa_cartao_17x_percentual?: number
+          taxa_cartao_18x_percentual?: number
+          taxa_cartao_19x_percentual?: number
           taxa_cartao_1x_percentual?: number
+          taxa_cartao_20x_percentual?: number
+          taxa_cartao_21x_percentual?: number
+          taxa_cartao_22x_percentual?: number
+          taxa_cartao_23x_percentual?: number
+          taxa_cartao_24x_percentual?: number
           taxa_cartao_2x_percentual?: number
           taxa_cartao_3x_percentual?: number
           taxa_cartao_4x_percentual?: number
