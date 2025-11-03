@@ -37,6 +37,9 @@ interface ParametrosGlobais {
   taxa_cartao_24x_percentual: number;
   percentual_entrada_padrao: number;
   juros_parcelamento_mensal: number;
+  juros_12x_percentual: number;
+  juros_18x_percentual: number;
+  juros_24x_percentual: number;
   politica_arredondamento: string;
   observacao_condicoes_comerciais: string;
   plano_30_markup_percentual: number;
@@ -213,32 +216,62 @@ const Configuracoes = () => {
             <CardDescription>Parâmetros para cálculo de entrada e parcelamento</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="entrada">Percentual de Entrada Padrão</Label>
-                <Input
-                  id="entrada"
-                  type="number"
-                  step="0.01"
-                  value={parametros.percentual_entrada_padrao}
-                  onChange={(e) => updateParametro("percentual_entrada_padrao", parseFloat(e.target.value))}
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {(parametros.percentual_entrada_padrao * 100).toFixed(2)}%
-                </p>
-              </div>
-              <div>
-                <Label htmlFor="juros">Juros Mensal de Parcelamento</Label>
-                <Input
-                  id="juros"
-                  type="number"
-                  step="0.001"
-                  value={parametros.juros_parcelamento_mensal}
-                  onChange={(e) => updateParametro("juros_parcelamento_mensal", parseFloat(e.target.value))}
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {(parametros.juros_parcelamento_mensal * 100).toFixed(2)}%
-                </p>
+            <div>
+              <Label htmlFor="entrada">Percentual de Entrada Padrão</Label>
+              <Input
+                id="entrada"
+                type="number"
+                step="0.01"
+                value={parametros.percentual_entrada_padrao}
+                onChange={(e) => updateParametro("percentual_entrada_padrao", parseFloat(e.target.value))}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {(parametros.percentual_entrada_padrao * 100).toFixed(2)}%
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-medium">Opções de Parcelamento</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="juros-12x">Juros 12x</Label>
+                  <Input
+                    id="juros-12x"
+                    type="number"
+                    step="0.0001"
+                    value={parametros.juros_12x_percentual}
+                    onChange={(e) => updateParametro("juros_12x_percentual", parseFloat(e.target.value))}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {(parametros.juros_12x_percentual * 100).toFixed(2)}% ao mês
+                  </p>
+                </div>
+                <div>
+                  <Label htmlFor="juros-18x">Juros 18x</Label>
+                  <Input
+                    id="juros-18x"
+                    type="number"
+                    step="0.0001"
+                    value={parametros.juros_18x_percentual}
+                    onChange={(e) => updateParametro("juros_18x_percentual", parseFloat(e.target.value))}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {(parametros.juros_18x_percentual * 100).toFixed(2)}% ao mês
+                  </p>
+                </div>
+                <div>
+                  <Label htmlFor="juros-24x">Juros 24x</Label>
+                  <Input
+                    id="juros-24x"
+                    type="number"
+                    step="0.0001"
+                    value={parametros.juros_24x_percentual}
+                    onChange={(e) => updateParametro("juros_24x_percentual", parseFloat(e.target.value))}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {(parametros.juros_24x_percentual * 100).toFixed(2)}% ao mês
+                  </p>
+                </div>
               </div>
             </div>
 

@@ -51,6 +51,9 @@ interface ParametrosGlobais {
   taxa_cartao_24x_percentual: number;
   percentual_entrada_padrao: number;
   juros_parcelamento_mensal: number;
+  juros_12x_percentual: number;
+  juros_18x_percentual: number;
+  juros_24x_percentual: number;
   plano_30_markup_percentual: number;
   plano_40_markup_percentual: number;
   plano_50_markup_percentual: number;
@@ -138,9 +141,18 @@ const CriarProposta = () => {
     if (!produtoSelecionado || !parametros) return null;
 
     const precoFinal = calcularPrecoFinal();
-    const entrada = precoFinal * parametros.percentual_entrada_padrao;
+    const entrada = precoFinal * 0.30; // Entrada sempre 30%
     const valorFinanciado = precoFinal - entrada;
-    const jurosMensal = parametros.juros_parcelamento_mensal;
+    
+    // Selecionar a taxa de juros baseada no número de parcelas
+    let jurosMensal = parametros.juros_parcelamento_mensal;
+    if (numeroParcelas === 12) {
+      jurosMensal = parametros.juros_12x_percentual;
+    } else if (numeroParcelas === 18) {
+      jurosMensal = parametros.juros_18x_percentual;
+    } else if (numeroParcelas === 24) {
+      jurosMensal = parametros.juros_24x_percentual;
+    }
 
     // Cálculo com juros compostos
     const fatorJuros = Math.pow(1 + jurosMensal, numeroParcelas);
@@ -154,6 +166,7 @@ const CriarProposta = () => {
       parcelaValor,
       parcelas: numeroParcelas,
       totalFinanciado,
+      jurosMensal,
     };
   };
 
@@ -230,8 +243,8 @@ const CriarProposta = () => {
         parcela_valor: financiamento.parcelaValor,
         valor_da_parcela: financiamento.parcelaValor,
         total_financiado: financiamento.totalFinanciado,
-        percentual_entrada_utilizado: parametros.percentual_entrada_padrao,
-        juros_parcelamento_mensal_usado: parametros.juros_parcelamento_mensal,
+        percentual_entrada_utilizado: 0.30,
+        juros_parcelamento_mensal_usado: financiamento.jurosMensal,
       };
     }
 
@@ -425,16 +438,16 @@ const CriarProposta = () => {
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="12">12x</SelectItem>
-                                    <SelectItem value="18">18x</SelectItem>
-                                    <SelectItem value="24">24x</SelectItem>
+                                    <SelectItem value="12">12x - Taxa {(parametros.juros_12x_percentual * 100).toFixed(2)}% a.m.</SelectItem>
+                                    <SelectItem value="18">18x - Taxa {(parametros.juros_18x_percentual * 100).toFixed(2)}% a.m.</SelectItem>
+                                    <SelectItem value="24">24x - Taxa {(parametros.juros_24x_percentual * 100).toFixed(2)}% a.m.</SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
                               
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                  <p className="text-sm text-muted-foreground">Entrada ({(parametros?.percentual_entrada_padrao || 0) * 100}%)</p>
+                                  <p className="text-sm text-muted-foreground">Entrada (30%)</p>
                                   <p className="text-2xl font-bold text-primary">
                                     R$ {financiamento.entrada.toFixed(2)}
                                   </p>

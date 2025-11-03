@@ -18,6 +18,9 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          juros_12x_percentual: number
+          juros_18x_percentual: number
+          juros_24x_percentual: number
           juros_parcelamento_mensal: number
           observacao_condicoes_comerciais: string | null
           percentual_entrada_padrao: number
@@ -54,6 +57,9 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
+          juros_12x_percentual?: number
+          juros_18x_percentual?: number
+          juros_24x_percentual?: number
           juros_parcelamento_mensal?: number
           observacao_condicoes_comerciais?: string | null
           percentual_entrada_padrao?: number
@@ -90,6 +96,9 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
+          juros_12x_percentual?: number
+          juros_18x_percentual?: number
+          juros_24x_percentual?: number
           juros_parcelamento_mensal?: number
           observacao_condicoes_comerciais?: string | null
           percentual_entrada_padrao?: number
