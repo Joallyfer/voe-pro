@@ -57,6 +57,56 @@ interface ParametrosGlobais {
   plano_30_markup_percentual: number;
   plano_40_markup_percentual: number;
   plano_50_markup_percentual: number;
+  taxa_custo_empresa_debito: number;
+  taxa_custo_empresa_1x: number;
+  taxa_custo_empresa_2x: number;
+  taxa_custo_empresa_3x: number;
+  taxa_custo_empresa_4x: number;
+  taxa_custo_empresa_5x: number;
+  taxa_custo_empresa_6x: number;
+  taxa_custo_empresa_7x: number;
+  taxa_custo_empresa_8x: number;
+  taxa_custo_empresa_9x: number;
+  taxa_custo_empresa_10x: number;
+  taxa_custo_empresa_11x: number;
+  taxa_custo_empresa_12x: number;
+  taxa_custo_empresa_13x: number;
+  taxa_custo_empresa_14x: number;
+  taxa_custo_empresa_15x: number;
+  taxa_custo_empresa_16x: number;
+  taxa_custo_empresa_17x: number;
+  taxa_custo_empresa_18x: number;
+  taxa_custo_empresa_19x: number;
+  taxa_custo_empresa_20x: number;
+  taxa_custo_empresa_21x: number;
+  taxa_custo_empresa_22x: number;
+  taxa_custo_empresa_23x: number;
+  taxa_custo_empresa_24x: number;
+  taxa_repassada_cliente_debito: number;
+  taxa_repassada_cliente_1x: number;
+  taxa_repassada_cliente_2x: number;
+  taxa_repassada_cliente_3x: number;
+  taxa_repassada_cliente_4x: number;
+  taxa_repassada_cliente_5x: number;
+  taxa_repassada_cliente_6x: number;
+  taxa_repassada_cliente_7x: number;
+  taxa_repassada_cliente_8x: number;
+  taxa_repassada_cliente_9x: number;
+  taxa_repassada_cliente_10x: number;
+  taxa_repassada_cliente_11x: number;
+  taxa_repassada_cliente_12x: number;
+  taxa_repassada_cliente_13x: number;
+  taxa_repassada_cliente_14x: number;
+  taxa_repassada_cliente_15x: number;
+  taxa_repassada_cliente_16x: number;
+  taxa_repassada_cliente_17x: number;
+  taxa_repassada_cliente_18x: number;
+  taxa_repassada_cliente_19x: number;
+  taxa_repassada_cliente_20x: number;
+  taxa_repassada_cliente_21x: number;
+  taxa_repassada_cliente_22x: number;
+  taxa_repassada_cliente_23x: number;
+  taxa_repassada_cliente_24x: number;
 }
 
 const CriarProposta = () => {
@@ -176,14 +226,22 @@ const CriarProposta = () => {
     const precoFinal = calcularPrecoFinal();
     const opcoes = [];
     for (let i = 1; i <= 24; i++) {
-      const taxaKey = `taxa_cartao_${i}x_percentual` as keyof ParametrosGlobais;
-      const taxa = parametros[taxaKey] as number;
-      const totalCartao = precoFinal * (1 + taxa);
-      const parcelaCartao = totalCartao / i;
+      const taxaCustoKey = `taxa_custo_empresa_${i}x` as keyof ParametrosGlobais;
+      const taxaClienteKey = `taxa_repassada_cliente_${i}x` as keyof ParametrosGlobais;
+      const taxaCusto = parametros[taxaCustoKey] as number;
+      const taxaCliente = parametros[taxaClienteKey] as number;
+      
+      const valorLiquidoEmpresa = precoFinal * (1 - taxaCusto);
+      const valorTotalCliente = precoFinal * (1 + taxaCliente);
+      const parcelaCartao = valorTotalCliente / i;
+      
       opcoes.push({
         parcelas: i,
         valorParcela: parcelaCartao,
-        valorTotal: totalCartao,
+        valorTotal: valorTotalCliente,
+        valorLiquidoEmpresa,
+        taxaCustoEmpresa: taxaCusto,
+        taxaRepassadaCliente: taxaCliente,
       });
     }
     return opcoes;
@@ -490,18 +548,38 @@ const CriarProposta = () => {
                               <div 
                                 key={opcao.parcelas}
                                 onClick={() => setParcelasCartaoSelecionadas(opcao.parcelas)}
-                                className={`flex justify-between items-center p-3 rounded-lg cursor-pointer transition-all ${
+                                className={`p-3 rounded-lg cursor-pointer transition-all ${
                                   parcelasCartaoSelecionadas === opcao.parcelas
                                     ? "bg-primary/20 border-2 border-primary"
                                     : "bg-background border border-border hover:border-primary"
                                 }`}
                               >
-                                <span className="font-medium">{opcao.parcelas}x</span>
-                                <div className="text-right">
-                                  <p className="font-bold">R$ {opcao.valorParcela.toFixed(2)}</p>
-                                  <p className="text-xs text-muted-foreground">
-                                    Total: R$ {opcao.valorTotal.toFixed(2)}
-                                  </p>
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="font-medium text-lg">{opcao.parcelas}x</span>
+                                  <div className="text-right">
+                                    <p className="font-bold text-lg">R$ {opcao.valorParcela.toFixed(2)}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      Total: R$ {opcao.valorTotal.toFixed(2)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-border/50">
+                                  <div>
+                                    <p className="text-muted-foreground">Taxa Empresa</p>
+                                    <p className="font-semibold">{(opcao.taxaCustoEmpresa * 100).toFixed(2)}%</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-muted-foreground">Líquido Empresa</p>
+                                    <p className="font-semibold text-primary">R$ {opcao.valorLiquidoEmpresa.toFixed(2)}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-muted-foreground">Taxa Cliente</p>
+                                    <p className="font-semibold">{(opcao.taxaRepassadaCliente * 100).toFixed(2)}%</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-muted-foreground">Total Cliente</p>
+                                    <p className="font-semibold">R$ {opcao.valorTotal.toFixed(2)}</p>
+                                  </div>
                                 </div>
                               </div>
                             ))}

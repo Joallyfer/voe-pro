@@ -136,7 +136,7 @@ const PropostaPublica = () => {
             </div>
 
             {/* Condição Parcelada */}
-            {proposta.tipo_pagamento === "financiamento" && (
+            {proposta.tipo_pagamento === "financiamento" ? (
               <div className="space-y-4">
                 <h4 className="font-semibold text-lg border-b border-border pb-2">
                   Condição Parcelada com Entrada
@@ -184,6 +184,28 @@ const PropostaPublica = () => {
                       })}
                     </p>
                   </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <h4 className="font-semibold text-lg border-b border-border pb-2">
+                  Pagamento no Cartão de Crédito
+                </h4>
+                
+                <div className="p-6 rounded-lg bg-card border border-primary/20 text-center">
+                  <p className="text-sm text-muted-foreground mb-2">Parcelas</p>
+                  <p className="text-3xl font-bold text-primary mb-1">
+                    {proposta.parcelas_qtd}x de R$ {proposta.parcela_valor.toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Total: R$ {proposta.total_financiado.toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
                 </div>
               </div>
             )}

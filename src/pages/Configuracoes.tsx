@@ -45,6 +45,56 @@ interface ParametrosGlobais {
   plano_30_markup_percentual: number;
   plano_40_markup_percentual: number;
   plano_50_markup_percentual: number;
+  taxa_custo_empresa_debito: number;
+  taxa_custo_empresa_1x: number;
+  taxa_custo_empresa_2x: number;
+  taxa_custo_empresa_3x: number;
+  taxa_custo_empresa_4x: number;
+  taxa_custo_empresa_5x: number;
+  taxa_custo_empresa_6x: number;
+  taxa_custo_empresa_7x: number;
+  taxa_custo_empresa_8x: number;
+  taxa_custo_empresa_9x: number;
+  taxa_custo_empresa_10x: number;
+  taxa_custo_empresa_11x: number;
+  taxa_custo_empresa_12x: number;
+  taxa_custo_empresa_13x: number;
+  taxa_custo_empresa_14x: number;
+  taxa_custo_empresa_15x: number;
+  taxa_custo_empresa_16x: number;
+  taxa_custo_empresa_17x: number;
+  taxa_custo_empresa_18x: number;
+  taxa_custo_empresa_19x: number;
+  taxa_custo_empresa_20x: number;
+  taxa_custo_empresa_21x: number;
+  taxa_custo_empresa_22x: number;
+  taxa_custo_empresa_23x: number;
+  taxa_custo_empresa_24x: number;
+  taxa_repassada_cliente_debito: number;
+  taxa_repassada_cliente_1x: number;
+  taxa_repassada_cliente_2x: number;
+  taxa_repassada_cliente_3x: number;
+  taxa_repassada_cliente_4x: number;
+  taxa_repassada_cliente_5x: number;
+  taxa_repassada_cliente_6x: number;
+  taxa_repassada_cliente_7x: number;
+  taxa_repassada_cliente_8x: number;
+  taxa_repassada_cliente_9x: number;
+  taxa_repassada_cliente_10x: number;
+  taxa_repassada_cliente_11x: number;
+  taxa_repassada_cliente_12x: number;
+  taxa_repassada_cliente_13x: number;
+  taxa_repassada_cliente_14x: number;
+  taxa_repassada_cliente_15x: number;
+  taxa_repassada_cliente_16x: number;
+  taxa_repassada_cliente_17x: number;
+  taxa_repassada_cliente_18x: number;
+  taxa_repassada_cliente_19x: number;
+  taxa_repassada_cliente_20x: number;
+  taxa_repassada_cliente_21x: number;
+  taxa_repassada_cliente_22x: number;
+  taxa_repassada_cliente_23x: number;
+  taxa_repassada_cliente_24x: number;
 }
 
 const Configuracoes = () => {
@@ -184,25 +234,76 @@ const Configuracoes = () => {
         <Card>
           <CardHeader>
             <CardTitle>Taxas de Cartão de Crédito</CardTitle>
-            <CardDescription>Percentuais para cada modalidade de parcelamento</CardDescription>
+            <CardDescription>Configure as taxas de custo da empresa (MDR + antecipação) e taxa repassada ao cliente</CardDescription>
           </CardHeader>
-          <CardContent className="grid md:grid-cols-3 gap-4">
-            {[...Array(24)].map((_, i) => {
-              const parcela = i + 1;
-              const campo = `taxa_cartao_${parcela}x_percentual` as keyof ParametrosGlobais;
-              return (
-                <div key={parcela}>
-                  <Label htmlFor={`taxa-${parcela}x`}>{parcela}x</Label>
+          <CardContent className="space-y-4">
+            {/* Débito */}
+            <div className="p-4 bg-secondary/30 rounded-lg">
+              <h4 className="font-semibold mb-3">Débito</h4>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="taxa_custo_empresa_debito">Taxa Custo Empresa</Label>
                   <Input
-                    id={`taxa-${parcela}x`}
+                    id="taxa_custo_empresa_debito"
                     type="number"
                     step="0.0001"
-                    value={parametros[campo] as number}
-                    onChange={(e) => updateParametro(campo, parseFloat(e.target.value))}
+                    value={parametros.taxa_custo_empresa_debito}
+                    onChange={(e) => updateParametro("taxa_custo_empresa_debito", parseFloat(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    {((parametros[campo] as number) * 100).toFixed(2)}%
+                    {(parametros.taxa_custo_empresa_debito * 100).toFixed(2)}%
                   </p>
+                </div>
+                <div>
+                  <Label htmlFor="taxa_repassada_cliente_debito">Taxa Repassada Cliente</Label>
+                  <Input
+                    id="taxa_repassada_cliente_debito"
+                    type="number"
+                    step="0.0001"
+                    value={parametros.taxa_repassada_cliente_debito}
+                    onChange={(e) => updateParametro("taxa_repassada_cliente_debito", parseFloat(e.target.value))}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {(parametros.taxa_repassada_cliente_debito * 100).toFixed(2)}%
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Parcelado 1x-24x */}
+            {[...Array(24)].map((_, i) => {
+              const parcela = i + 1;
+              return (
+                <div key={parcela} className="p-4 bg-secondary/30 rounded-lg">
+                  <h4 className="font-semibold mb-3">{parcela}x</h4>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor={`taxa_custo_empresa_${parcela}x`}>Taxa Custo Empresa</Label>
+                      <Input
+                        id={`taxa_custo_empresa_${parcela}x`}
+                        type="number"
+                        step="0.0001"
+                        value={parametros[`taxa_custo_empresa_${parcela}x` as keyof ParametrosGlobais] as number}
+                        onChange={(e) => updateParametro(`taxa_custo_empresa_${parcela}x` as keyof ParametrosGlobais, parseFloat(e.target.value))}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {((parametros[`taxa_custo_empresa_${parcela}x` as keyof ParametrosGlobais] as number) * 100).toFixed(2)}%
+                      </p>
+                    </div>
+                    <div>
+                      <Label htmlFor={`taxa_repassada_cliente_${parcela}x`}>Taxa Repassada Cliente</Label>
+                      <Input
+                        id={`taxa_repassada_cliente_${parcela}x`}
+                        type="number"
+                        step="0.0001"
+                        value={parametros[`taxa_repassada_cliente_${parcela}x` as keyof ParametrosGlobais] as number}
+                        onChange={(e) => updateParametro(`taxa_repassada_cliente_${parcela}x` as keyof ParametrosGlobais, parseFloat(e.target.value))}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {((parametros[`taxa_repassada_cliente_${parcela}x` as keyof ParametrosGlobais] as number) * 100).toFixed(2)}%
+                      </p>
+                    </div>
+                  </div>
                 </div>
               );
             })}

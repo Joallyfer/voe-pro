@@ -52,6 +52,56 @@ export type Database = {
           taxa_cartao_7x_percentual: number
           taxa_cartao_8x_percentual: number
           taxa_cartao_9x_percentual: number
+          taxa_custo_empresa_10x: number
+          taxa_custo_empresa_11x: number
+          taxa_custo_empresa_12x: number
+          taxa_custo_empresa_13x: number
+          taxa_custo_empresa_14x: number
+          taxa_custo_empresa_15x: number
+          taxa_custo_empresa_16x: number
+          taxa_custo_empresa_17x: number
+          taxa_custo_empresa_18x: number
+          taxa_custo_empresa_19x: number
+          taxa_custo_empresa_1x: number
+          taxa_custo_empresa_20x: number
+          taxa_custo_empresa_21x: number
+          taxa_custo_empresa_22x: number
+          taxa_custo_empresa_23x: number
+          taxa_custo_empresa_24x: number
+          taxa_custo_empresa_2x: number
+          taxa_custo_empresa_3x: number
+          taxa_custo_empresa_4x: number
+          taxa_custo_empresa_5x: number
+          taxa_custo_empresa_6x: number
+          taxa_custo_empresa_7x: number
+          taxa_custo_empresa_8x: number
+          taxa_custo_empresa_9x: number
+          taxa_custo_empresa_debito: number
+          taxa_repassada_cliente_10x: number
+          taxa_repassada_cliente_11x: number
+          taxa_repassada_cliente_12x: number
+          taxa_repassada_cliente_13x: number
+          taxa_repassada_cliente_14x: number
+          taxa_repassada_cliente_15x: number
+          taxa_repassada_cliente_16x: number
+          taxa_repassada_cliente_17x: number
+          taxa_repassada_cliente_18x: number
+          taxa_repassada_cliente_19x: number
+          taxa_repassada_cliente_1x: number
+          taxa_repassada_cliente_20x: number
+          taxa_repassada_cliente_21x: number
+          taxa_repassada_cliente_22x: number
+          taxa_repassada_cliente_23x: number
+          taxa_repassada_cliente_24x: number
+          taxa_repassada_cliente_2x: number
+          taxa_repassada_cliente_3x: number
+          taxa_repassada_cliente_4x: number
+          taxa_repassada_cliente_5x: number
+          taxa_repassada_cliente_6x: number
+          taxa_repassada_cliente_7x: number
+          taxa_repassada_cliente_8x: number
+          taxa_repassada_cliente_9x: number
+          taxa_repassada_cliente_debito: number
           updated_at: string | null
         }
         Insert: {
@@ -91,6 +141,56 @@ export type Database = {
           taxa_cartao_7x_percentual?: number
           taxa_cartao_8x_percentual?: number
           taxa_cartao_9x_percentual?: number
+          taxa_custo_empresa_10x?: number
+          taxa_custo_empresa_11x?: number
+          taxa_custo_empresa_12x?: number
+          taxa_custo_empresa_13x?: number
+          taxa_custo_empresa_14x?: number
+          taxa_custo_empresa_15x?: number
+          taxa_custo_empresa_16x?: number
+          taxa_custo_empresa_17x?: number
+          taxa_custo_empresa_18x?: number
+          taxa_custo_empresa_19x?: number
+          taxa_custo_empresa_1x?: number
+          taxa_custo_empresa_20x?: number
+          taxa_custo_empresa_21x?: number
+          taxa_custo_empresa_22x?: number
+          taxa_custo_empresa_23x?: number
+          taxa_custo_empresa_24x?: number
+          taxa_custo_empresa_2x?: number
+          taxa_custo_empresa_3x?: number
+          taxa_custo_empresa_4x?: number
+          taxa_custo_empresa_5x?: number
+          taxa_custo_empresa_6x?: number
+          taxa_custo_empresa_7x?: number
+          taxa_custo_empresa_8x?: number
+          taxa_custo_empresa_9x?: number
+          taxa_custo_empresa_debito?: number
+          taxa_repassada_cliente_10x?: number
+          taxa_repassada_cliente_11x?: number
+          taxa_repassada_cliente_12x?: number
+          taxa_repassada_cliente_13x?: number
+          taxa_repassada_cliente_14x?: number
+          taxa_repassada_cliente_15x?: number
+          taxa_repassada_cliente_16x?: number
+          taxa_repassada_cliente_17x?: number
+          taxa_repassada_cliente_18x?: number
+          taxa_repassada_cliente_19x?: number
+          taxa_repassada_cliente_1x?: number
+          taxa_repassada_cliente_20x?: number
+          taxa_repassada_cliente_21x?: number
+          taxa_repassada_cliente_22x?: number
+          taxa_repassada_cliente_23x?: number
+          taxa_repassada_cliente_24x?: number
+          taxa_repassada_cliente_2x?: number
+          taxa_repassada_cliente_3x?: number
+          taxa_repassada_cliente_4x?: number
+          taxa_repassada_cliente_5x?: number
+          taxa_repassada_cliente_6x?: number
+          taxa_repassada_cliente_7x?: number
+          taxa_repassada_cliente_8x?: number
+          taxa_repassada_cliente_9x?: number
+          taxa_repassada_cliente_debito?: number
           updated_at?: string | null
         }
         Update: {
@@ -130,6 +230,56 @@ export type Database = {
           taxa_cartao_7x_percentual?: number
           taxa_cartao_8x_percentual?: number
           taxa_cartao_9x_percentual?: number
+          taxa_custo_empresa_10x?: number
+          taxa_custo_empresa_11x?: number
+          taxa_custo_empresa_12x?: number
+          taxa_custo_empresa_13x?: number
+          taxa_custo_empresa_14x?: number
+          taxa_custo_empresa_15x?: number
+          taxa_custo_empresa_16x?: number
+          taxa_custo_empresa_17x?: number
+          taxa_custo_empresa_18x?: number
+          taxa_custo_empresa_19x?: number
+          taxa_custo_empresa_1x?: number
+          taxa_custo_empresa_20x?: number
+          taxa_custo_empresa_21x?: number
+          taxa_custo_empresa_22x?: number
+          taxa_custo_empresa_23x?: number
+          taxa_custo_empresa_24x?: number
+          taxa_custo_empresa_2x?: number
+          taxa_custo_empresa_3x?: number
+          taxa_custo_empresa_4x?: number
+          taxa_custo_empresa_5x?: number
+          taxa_custo_empresa_6x?: number
+          taxa_custo_empresa_7x?: number
+          taxa_custo_empresa_8x?: number
+          taxa_custo_empresa_9x?: number
+          taxa_custo_empresa_debito?: number
+          taxa_repassada_cliente_10x?: number
+          taxa_repassada_cliente_11x?: number
+          taxa_repassada_cliente_12x?: number
+          taxa_repassada_cliente_13x?: number
+          taxa_repassada_cliente_14x?: number
+          taxa_repassada_cliente_15x?: number
+          taxa_repassada_cliente_16x?: number
+          taxa_repassada_cliente_17x?: number
+          taxa_repassada_cliente_18x?: number
+          taxa_repassada_cliente_19x?: number
+          taxa_repassada_cliente_1x?: number
+          taxa_repassada_cliente_20x?: number
+          taxa_repassada_cliente_21x?: number
+          taxa_repassada_cliente_22x?: number
+          taxa_repassada_cliente_23x?: number
+          taxa_repassada_cliente_24x?: number
+          taxa_repassada_cliente_2x?: number
+          taxa_repassada_cliente_3x?: number
+          taxa_repassada_cliente_4x?: number
+          taxa_repassada_cliente_5x?: number
+          taxa_repassada_cliente_6x?: number
+          taxa_repassada_cliente_7x?: number
+          taxa_repassada_cliente_8x?: number
+          taxa_repassada_cliente_9x?: number
+          taxa_repassada_cliente_debito?: number
           updated_at?: string | null
         }
         Relationships: []
