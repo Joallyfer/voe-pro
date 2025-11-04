@@ -17,11 +17,7 @@ interface Produto {
   preco_de_venda: number;
   comissao_percentual: number;
   preco_final: number;
-  entrada_valor: number;
-  valor_financiado: number;
-  parcela_valor: number;
-  parcelas_qtd: number;
-  valor_total_financiado: number;
+  quantidade_estoque: number;
   ativo: boolean;
 }
 
@@ -112,11 +108,12 @@ const Produtos = () => {
         preco_de_venda: editData.preco_de_venda || editData.preco_final,
         comissao_percentual: editData.comissao_percentual || 0.015,
         preco_final: editData.preco_final,
-        entrada_valor: editData.entrada_valor || 0,
-        valor_financiado: editData.valor_financiado || 0,
-        parcela_valor: editData.parcela_valor || 0,
-        parcelas_qtd: editData.parcelas_qtd || 24,
-        valor_total_financiado: editData.valor_total_financiado || 0,
+        quantidade_estoque: editData.quantidade_estoque || 0,
+        entrada_valor: 0,
+        valor_financiado: 0,
+        parcela_valor: 0,
+        parcelas_qtd: 0,
+        valor_total_financiado: 0,
         ativo: true,
       }]);
 
@@ -184,7 +181,7 @@ const Produtos = () => {
                 </div>
               </div>
               
-              <div className="grid md:grid-cols-3 gap-4">
+              <div className="grid md:grid-cols-4 gap-4">
                 <div>
                   <Label>Preço de Venda *</Label>
                   <Input
@@ -212,54 +209,12 @@ const Produtos = () => {
                     onChange={(e) => setEditData({ ...editData, preco_final: parseFloat(e.target.value) })}
                   />
                 </div>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-4">
                 <div>
-                  <Label>Entrada</Label>
+                  <Label>Quantidade em Estoque</Label>
                   <Input
                     type="number"
-                    step="0.01"
-                    value={editData.entrada_valor || ""}
-                    onChange={(e) => setEditData({ ...editData, entrada_valor: parseFloat(e.target.value) })}
-                  />
-                </div>
-                <div>
-                  <Label>Valor Financiado</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={editData.valor_financiado || ""}
-                    onChange={(e) => setEditData({ ...editData, valor_financiado: parseFloat(e.target.value) })}
-                  />
-                </div>
-                <div>
-                  <Label>Parcela Valor</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={editData.parcela_valor || ""}
-                    onChange={(e) => setEditData({ ...editData, parcela_valor: parseFloat(e.target.value) })}
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Quantidade Parcelas</Label>
-                  <Input
-                    type="number"
-                    value={editData.parcelas_qtd || ""}
-                    onChange={(e) => setEditData({ ...editData, parcelas_qtd: parseInt(e.target.value) })}
-                  />
-                </div>
-                <div>
-                  <Label>Total Financiado</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={editData.valor_total_financiado || ""}
-                    onChange={(e) => setEditData({ ...editData, valor_total_financiado: parseFloat(e.target.value) })}
+                    value={editData.quantidade_estoque || ""}
+                    onChange={(e) => setEditData({ ...editData, quantidade_estoque: parseInt(e.target.value) })}
                   />
                 </div>
               </div>
@@ -281,7 +236,7 @@ const Produtos = () => {
               <CardContent className="p-6">
                 {editingId === produto.id ? (
                   <div className="grid gap-4">
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-3 gap-4">
                       <div>
                         <Label>Nome do Produto</Label>
                         <Input
@@ -298,33 +253,12 @@ const Produtos = () => {
                           onChange={(e) => setEditData({ ...editData, preco_final: parseFloat(e.target.value) })}
                         />
                       </div>
-                    </div>
-                    
-                    <div className="grid md:grid-cols-3 gap-4">
                       <div>
-                        <Label>Entrada</Label>
+                        <Label>Quantidade em Estoque</Label>
                         <Input
                           type="number"
-                          step="0.01"
-                          value={editData.entrada_valor || ""}
-                          onChange={(e) => setEditData({ ...editData, entrada_valor: parseFloat(e.target.value) })}
-                        />
-                      </div>
-                      <div>
-                        <Label>Parcela</Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={editData.parcela_valor || ""}
-                          onChange={(e) => setEditData({ ...editData, parcela_valor: parseFloat(e.target.value) })}
-                        />
-                      </div>
-                      <div>
-                        <Label>Qtd Parcelas</Label>
-                        <Input
-                          type="number"
-                          value={editData.parcelas_qtd || ""}
-                          onChange={(e) => setEditData({ ...editData, parcelas_qtd: parseInt(e.target.value) })}
+                          value={editData.quantidade_estoque || ""}
+                          onChange={(e) => setEditData({ ...editData, quantidade_estoque: parseInt(e.target.value) })}
                         />
                       </div>
                     </div>
@@ -354,9 +288,9 @@ const Produtos = () => {
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Parcelas</p>
+                        <p className="text-sm text-muted-foreground">Estoque</p>
                         <p className="font-semibold">
-                          {produto.parcelas_qtd}x de R$ {produto.parcela_valor.toFixed(2)}
+                          {produto.quantidade_estoque} unidades
                         </p>
                       </div>
                       <div className="flex items-center gap-2">

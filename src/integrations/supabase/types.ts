@@ -298,6 +298,7 @@ export type Database = {
           plano: string
           preco_de_venda: number
           preco_final: number
+          quantidade_estoque: number
           updated_at: string | null
           valor_financiado: number
           valor_total_financiado: number
@@ -315,6 +316,7 @@ export type Database = {
           plano?: string
           preco_de_venda: number
           preco_final: number
+          quantidade_estoque?: number
           updated_at?: string | null
           valor_financiado: number
           valor_total_financiado: number
@@ -332,6 +334,7 @@ export type Database = {
           plano?: string
           preco_de_venda?: number
           preco_final?: number
+          quantidade_estoque?: number
           updated_at?: string | null
           valor_financiado?: number
           valor_total_financiado?: number
