@@ -103,10 +103,10 @@ const Produtos = () => {
       .from("produtos")
       .insert([{
         nome_produto: editData.nome_produto,
-        plano: editData.plano || "PLANO 40",
-        custo_base: editData.custo_base || 0,
-        preco_de_venda: editData.preco_de_venda || editData.preco_final,
-        comissao_percentual: editData.comissao_percentual || 0.015,
+        plano: "PLANO 40",
+        custo_base: editData.preco_final || 0,
+        preco_de_venda: 0,
+        comissao_percentual: 0.015,
         preco_final: editData.preco_final,
         quantidade_estoque: editData.quantidade_estoque || 0,
         entrada_valor: 0,
@@ -164,44 +164,7 @@ const Produtos = () => {
                   />
                 </div>
                 <div>
-                  <Label>Plano</Label>
-                  <Input
-                    value={editData.plano || "PLANO 40"}
-                    onChange={(e) => setEditData({ ...editData, plano: e.target.value })}
-                  />
-                </div>
-                <div>
                   <Label>Custo Base *</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={editData.custo_base || ""}
-                    onChange={(e) => setEditData({ ...editData, custo_base: parseFloat(e.target.value) })}
-                  />
-                </div>
-              </div>
-              
-              <div className="grid md:grid-cols-4 gap-4">
-                <div>
-                  <Label>Preço de Venda *</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={editData.preco_de_venda || ""}
-                    onChange={(e) => setEditData({ ...editData, preco_de_venda: parseFloat(e.target.value) })}
-                  />
-                </div>
-                <div>
-                  <Label>Comissão %</Label>
-                  <Input
-                    type="number"
-                    step="0.0001"
-                    value={editData.comissao_percentual || ""}
-                    onChange={(e) => setEditData({ ...editData, comissao_percentual: parseFloat(e.target.value) })}
-                  />
-                </div>
-                <div>
-                  <Label>Preço de Custo *</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -245,7 +208,7 @@ const Produtos = () => {
                         />
                       </div>
                       <div>
-                        <Label>Preço de Custo</Label>
+                        <Label>Custo Base</Label>
                         <Input
                           type="number"
                           step="0.01"
@@ -282,7 +245,7 @@ const Produtos = () => {
                         <p className="font-semibold text-lg">{produto.nome_produto}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Preço de Custo</p>
+                        <p className="text-sm text-muted-foreground">Custo Base</p>
                         <p className="font-semibold text-primary">
                           R$ {produto.preco_final.toFixed(2)}
                         </p>
