@@ -201,7 +201,7 @@ const Produtos = () => {
                   />
                 </div>
                 <div>
-                  <Label>Preço Final *</Label>
+                  <Label>Preço de Custo *</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -245,7 +245,7 @@ const Produtos = () => {
                         />
                       </div>
                       <div>
-                        <Label>Preço Final</Label>
+                        <Label>Preço de Custo</Label>
                         <Input
                           type="number"
                           step="0.01"
@@ -282,7 +282,7 @@ const Produtos = () => {
                         <p className="font-semibold text-lg">{produto.nome_produto}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Preço Final</p>
+                        <p className="text-sm text-muted-foreground">Preço de Custo</p>
                         <p className="font-semibold text-primary">
                           R$ {produto.preco_final.toFixed(2)}
                         </p>

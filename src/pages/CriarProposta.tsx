@@ -175,10 +175,16 @@ const CriarProposta = () => {
   };
 
   const calcularPrecoFinal = () => {
-    if (!produtoSelecionado) return 0;
+    if (!produtoSelecionado || !parametros) return 0;
+
+    const markupKey = `plano_${planoEscolhido}_markup_percentual` as keyof ParametrosGlobais;
+    const markup = parametros[markupKey] as number;
     
-    // Usar o preço final já cadastrado no produto
-    return produtoSelecionado.preco_final;
+    const precoComLucro = produtoSelecionado.preco_final * (1 + markup);
+    const valorComissao = precoComLucro * parseFloat(comissaoEscolhida);
+    const precoFinal = precoComLucro + valorComissao;
+    
+    return precoFinal;
   };
 
   const calcularFinanciamento = () => {
