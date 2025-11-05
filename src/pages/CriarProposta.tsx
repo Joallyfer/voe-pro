@@ -182,7 +182,10 @@ const CriarProposta = () => {
     
     const precoComLucro = produtoSelecionado.preco_final * (1 + markup);
     const valorComissao = precoComLucro * parseFloat(comissaoEscolhida);
-    const precoFinal = precoComLucro + valorComissao;
+    const precoSemImpostos = precoComLucro + valorComissao;
+    
+    // Adicionar 10% de impostos ao preço final
+    const precoFinal = precoSemImpostos * 1.10;
     
     return precoFinal;
   };
