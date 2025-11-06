@@ -13,6 +13,7 @@ interface Produto {
   parcelas_qtd: number;
   parcela_valor: number;
   ativo: boolean;
+  fotos?: string[];
 }
 
 const Dashboard = () => {
@@ -117,9 +118,18 @@ const Dashboard = () => {
             produtos.map((produto) => (
               <Card 
                 key={produto.id} 
-                className="border-border hover:border-primary transition-all duration-300 hover:shadow-gold cursor-pointer"
+                className="border-border hover:border-primary transition-all duration-300 hover:shadow-gold cursor-pointer overflow-hidden"
                 onClick={() => navigate(`/criar-proposta?produto=${produto.id}`)}
               >
+                {produto.fotos && produto.fotos.length > 0 && (
+                  <div className="w-full h-48 overflow-hidden bg-muted">
+                    <img 
+                      src={produto.fotos[0]} 
+                      alt={produto.nome_produto}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
                 <CardHeader>
                   <CardTitle className="text-xl">{produto.nome_produto}</CardTitle>
                   <CardDescription>Clique para criar proposta</CardDescription>
