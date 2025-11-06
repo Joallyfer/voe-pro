@@ -255,7 +255,7 @@ const CriarProposta = () => {
            Math.random().toString(36).substring(2, 15);
   };
 
-  const handleSubmit = async (e: React.FormEvent, tipoPagamento: "financiamento" | "cartao") => {
+  const handleSubmit = async (e: React.FormEvent, tipoPagamento: "financiamento" | "cartao" | "avista") => {
     e.preventDefault();
     
     if (!produtoSelecionado || !parametros) {
@@ -293,6 +293,18 @@ const CriarProposta = () => {
         valor_da_parcela: opcaoCartao.valorParcela,
         total_financiado: opcaoCartao.valorTotal,
         percentual_entrada_utilizado: 0,
+        juros_parcelamento_mensal_usado: 0,
+      };
+    } else if (tipoPagamento === "avista") {
+      dadosParaProposta = {
+        entrada_valor: financiamento.precoFinal,
+        entrada_reais: financiamento.precoFinal,
+        numero_de_parcelas: 1,
+        parcelas_qtd: 1,
+        parcela_valor: financiamento.precoFinal,
+        valor_da_parcela: financiamento.precoFinal,
+        total_financiado: financiamento.precoFinal,
+        percentual_entrada_utilizado: 1,
         juros_parcelamento_mensal_usado: 0,
       };
     } else {
@@ -484,9 +496,10 @@ const CriarProposta = () => {
                     </CardHeader>
                     <CardContent>
                       <Tabs defaultValue="financiamento">
-                        <TabsList className="grid w-full grid-cols-2">
+                        <TabsList className="grid w-full grid-cols-3">
                           <TabsTrigger value="financiamento">Entrada + Financiamento</TabsTrigger>
                           <TabsTrigger value="cartao">Cartão de Crédito</TabsTrigger>
+                          <TabsTrigger value="avista">À Vista</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="financiamento" className="space-y-4">
@@ -594,6 +607,48 @@ const CriarProposta = () => {
                           >
                             {loading ? "Gerando..." : `Gerar Proposta ${parcelasCartaoSelecionadas}x no Cartão`}
                           </Button>
+                        </TabsContent>
+
+                        <TabsContent value="avista" className="space-y-4">
+                          {financiamento && (
+                            <>
+                              <div className="text-center py-8">
+                                <p className="text-sm text-muted-foreground mb-2">Valor À Vista</p>
+                                <p className="text-4xl font-bold text-primary mb-4">
+                                  R$ {financiamento.precoFinal.toFixed(2)}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  Pagamento em uma única parcela
+                                </p>
+                              </div>
+                              
+                              <div className="bg-secondary/30 p-4 rounded-lg">
+                                <p className="text-sm text-muted-foreground mb-2">Resumo do Pagamento</p>
+                                <div className="space-y-2">
+                                  <div className="flex justify-between">
+                                    <span>Forma de Pagamento:</span>
+                                    <span className="font-semibold">À Vista</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span>Parcelas:</span>
+                                    <span className="font-semibold">1x</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span>Valor Total:</span>
+                                    <span className="font-semibold text-primary">R$ {financiamento.precoFinal.toFixed(2)}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <Button 
+                                className="w-full mt-4" 
+                                onClick={(e) => handleSubmit(e, "avista")}
+                                disabled={loading || !clienteNome}
+                              >
+                                {loading ? "Gerando..." : "Gerar Proposta À Vista"}
+                              </Button>
+                            </>
+                          )}
                         </TabsContent>
                       </Tabs>
                     </CardContent>
