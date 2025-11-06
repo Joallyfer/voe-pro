@@ -291,6 +291,7 @@ export type Database = {
           created_at: string | null
           custo_base: number
           entrada_valor: number
+          fotos: string[] | null
           id: string
           nome_produto: string
           parcela_valor: number
@@ -309,6 +310,7 @@ export type Database = {
           created_at?: string | null
           custo_base?: number
           entrada_valor: number
+          fotos?: string[] | null
           id?: string
           nome_produto: string
           parcela_valor: number
@@ -327,6 +329,7 @@ export type Database = {
           created_at?: string | null
           custo_base?: number
           entrada_valor?: number
+          fotos?: string[] | null
           id?: string
           nome_produto?: string
           parcela_valor?: number
