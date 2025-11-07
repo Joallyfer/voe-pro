@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, LogOut, Settings, FileText } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface Produto {
   id: string;
@@ -138,19 +139,13 @@ const Dashboard = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Preço Final:</span>
                     <span className="text-2xl font-bold text-primary">
-                      R$ {produto.preco_final.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
+                      {formatCurrency(produto.preco_final)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground">Parcela:</span>
                     <span className="font-semibold">
-                      {produto.parcelas_qtd}x de R$ {produto.parcela_valor.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
+                      {produto.parcelas_qtd}x de {formatCurrency(produto.parcela_valor)}
                     </span>
                   </div>
                 </CardContent>

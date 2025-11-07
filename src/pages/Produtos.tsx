@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Edit, Save, X, Upload, Trash2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { formatCurrency } from "@/lib/utils";
 
 interface Produto {
   id: string;
@@ -415,7 +416,7 @@ const Produtos = () => {
                         <div>
                           <p className="text-sm text-muted-foreground">Custo Base</p>
                           <p className="font-semibold text-primary">
-                            R$ {produto.preco_final.toFixed(2)}
+                            {formatCurrency(produto.preco_final)}
                           </p>
                         </div>
                         <div>

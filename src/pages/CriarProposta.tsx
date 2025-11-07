@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Calculator } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface Produto {
   id: string;
@@ -481,7 +482,7 @@ const CriarProposta = () => {
                     <Label>Preço Final Calculado (somente leitura)</Label>
                     <div className="p-3 bg-secondary/30 rounded-md">
                       <p className="text-2xl font-bold text-primary">
-                        R$ {calcularPrecoFinal().toFixed(2)}
+                        {formatCurrency(calcularPrecoFinal())}
                       </p>
                     </div>
                   </div>
@@ -523,13 +524,13 @@ const CriarProposta = () => {
                                 <div>
                                   <p className="text-sm text-muted-foreground">Entrada (30%)</p>
                                   <p className="text-2xl font-bold text-primary">
-                                    R$ {financiamento.entrada.toFixed(2)}
+                                    {formatCurrency(financiamento.entrada)}
                                   </p>
                                 </div>
                                 <div>
                                   <p className="text-sm text-muted-foreground">Valor Financiado</p>
                                   <p className="text-2xl font-bold">
-                                    R$ {financiamento.valorFinanciado.toFixed(2)}
+                                    {formatCurrency(financiamento.valorFinanciado)}
                                   </p>
                                 </div>
                               </div>
@@ -537,13 +538,13 @@ const CriarProposta = () => {
                                 <div>
                                   <p className="text-sm text-muted-foreground">Parcelas</p>
                                   <p className="text-xl font-bold">
-                                    {financiamento.parcelas}x de R$ {financiamento.parcelaValor.toFixed(2)}
+                                    {financiamento.parcelas}x de {formatCurrency(financiamento.parcelaValor)}
                                   </p>
                                 </div>
                                 <div>
                                   <p className="text-sm text-muted-foreground">Total Financiado</p>
                                   <p className="text-xl font-bold">
-                                    R$ {financiamento.totalFinanciado.toFixed(2)}
+                                    {formatCurrency(financiamento.totalFinanciado)}
                                   </p>
                                 </div>
                               </div>
@@ -573,9 +574,9 @@ const CriarProposta = () => {
                                 <div className="flex justify-between items-center mb-2">
                                   <span className="font-medium text-lg">{opcao.parcelas}x</span>
                                   <div className="text-right">
-                                    <p className="font-bold text-lg">R$ {opcao.valorParcela.toFixed(2)}</p>
+                                    <p className="font-bold text-lg">{formatCurrency(opcao.valorParcela)}</p>
                                     <p className="text-xs text-muted-foreground">
-                                      Total: R$ {opcao.valorTotal.toFixed(2)}
+                                      Total: {formatCurrency(opcao.valorTotal)}
                                     </p>
                                   </div>
                                 </div>
@@ -586,7 +587,7 @@ const CriarProposta = () => {
                                   </div>
                                   <div>
                                     <p className="text-muted-foreground">Líquido Empresa</p>
-                                    <p className="font-semibold text-primary">R$ {opcao.valorLiquidoEmpresa.toFixed(2)}</p>
+                                    <p className="font-semibold text-primary">{formatCurrency(opcao.valorLiquidoEmpresa)}</p>
                                   </div>
                                   <div>
                                     <p className="text-muted-foreground">Taxa Cliente</p>
@@ -594,7 +595,7 @@ const CriarProposta = () => {
                                   </div>
                                   <div>
                                     <p className="text-muted-foreground">Total Cliente</p>
-                                    <p className="font-semibold">R$ {opcao.valorTotal.toFixed(2)}</p>
+                                    <p className="font-semibold">{formatCurrency(opcao.valorTotal)}</p>
                                   </div>
                                 </div>
                               </div>
@@ -615,7 +616,7 @@ const CriarProposta = () => {
                               <div className="text-center py-8">
                                 <p className="text-sm text-muted-foreground mb-2">Valor À Vista</p>
                                 <p className="text-4xl font-bold text-primary mb-4">
-                                  R$ {financiamento.precoFinal.toFixed(2)}
+                                  {formatCurrency(financiamento.precoFinal)}
                                 </p>
                                 <p className="text-sm text-muted-foreground">
                                   Pagamento em uma única parcela
@@ -635,7 +636,7 @@ const CriarProposta = () => {
                                   </div>
                                   <div className="flex justify-between">
                                     <span>Valor Total:</span>
-                                    <span className="font-semibold text-primary">R$ {financiamento.precoFinal.toFixed(2)}</span>
+                                    <span className="font-semibold text-primary">{formatCurrency(financiamento.precoFinal)}</span>
                                   </div>
                                 </div>
                               </div>

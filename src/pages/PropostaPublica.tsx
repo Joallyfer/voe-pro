@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface Proposta {
   id: string;
@@ -128,10 +129,7 @@ const PropostaPublica = () => {
             <div className="p-4 rounded-lg bg-secondary/30 border border-primary/20">
               <p className="text-sm text-muted-foreground mb-1">Preço à vista</p>
               <p className="text-4xl font-bold text-primary">
-                R$ {proposta.preco_final_aplicado.toLocaleString("pt-BR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+                {formatCurrency(proposta.preco_final_aplicado)}
               </p>
             </div>
 
@@ -146,20 +144,14 @@ const PropostaPublica = () => {
                   <div className="p-4 rounded-lg bg-card border border-border">
                     <p className="text-xs text-muted-foreground mb-1">Entrada</p>
                     <p className="text-2xl font-bold text-foreground">
-                      R$ {proposta.entrada_valor.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
+                      {formatCurrency(proposta.entrada_valor)}
                     </p>
                   </div>
                   
                   <div className="p-4 rounded-lg bg-card border border-border">
                     <p className="text-xs text-muted-foreground mb-1">Saldo Financiado</p>
                     <p className="text-2xl font-bold text-foreground">
-                      R$ {(proposta.preco_final_aplicado - proposta.entrada_valor).toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
+                      {formatCurrency(proposta.preco_final_aplicado - proposta.entrada_valor)}
                     </p>
                   </div>
                 </div>
@@ -168,20 +160,14 @@ const PropostaPublica = () => {
                   <div className="p-4 rounded-lg bg-card border border-border">
                     <p className="text-xs text-muted-foreground mb-1">Parcelas</p>
                     <p className="text-xl font-bold text-primary">
-                      {proposta.parcelas_qtd}x de R$ {proposta.parcela_valor.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
+                      {proposta.parcelas_qtd}x de {formatCurrency(proposta.parcela_valor)}
                     </p>
                   </div>
                   
                   <div className="p-4 rounded-lg bg-card border border-border">
                     <p className="text-xs text-muted-foreground mb-1">Valor Total Financiado</p>
                     <p className="text-xl font-bold text-foreground">
-                      R$ {proposta.total_financiado.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
+                      {formatCurrency(proposta.total_financiado)}
                     </p>
                   </div>
                 </div>
@@ -195,16 +181,10 @@ const PropostaPublica = () => {
                 <div className="p-6 rounded-lg bg-card border border-primary/20 text-center">
                   <p className="text-sm text-muted-foreground mb-2">Parcelas</p>
                   <p className="text-3xl font-bold text-primary mb-1">
-                    {proposta.parcelas_qtd}x de R$ {proposta.parcela_valor.toLocaleString("pt-BR", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+                    {proposta.parcelas_qtd}x de {formatCurrency(proposta.parcela_valor)}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Total: R$ {proposta.total_financiado.toLocaleString("pt-BR", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+                    Total: {formatCurrency(proposta.total_financiado)}
                   </p>
                 </div>
               </div>
