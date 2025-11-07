@@ -322,6 +322,12 @@ const CriarProposta = () => {
       };
     }
 
+    console.log("Dados para proposta:", {
+      cliente_nome: clienteNome,
+      tipo_pagamento: tipoPagamento,
+      dadosParaProposta
+    });
+
     const { data, error } = await supabase
       .from("propostas")
       .insert({
@@ -344,7 +350,10 @@ const CriarProposta = () => {
       .select()
       .single();
 
+    console.log("Resultado:", { data, error });
+
     if (error) {
+      console.error("Erro detalhado:", error);
       toast({
         title: "Erro ao criar proposta",
         description: error.message,
