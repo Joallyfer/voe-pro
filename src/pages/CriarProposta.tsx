@@ -127,6 +127,7 @@ const CriarProposta = () => {
   const [comissaoEscolhida, setComissaoEscolhida] = useState<"0.005" | "0.01" | "0.015">("0.01");
   const [numeroParcelas, setNumeroParcelas] = useState<12 | 18 | 24>(24);
   const [parcelasCartaoSelecionadas, setParcelasCartaoSelecionadas] = useState<number>(1);
+  const [entradaValor, setEntradaValor] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -150,6 +151,15 @@ const CriarProposta = () => {
       }
     }
   }, [selectedProdutoId, produtos]);
+
+  // Atualizar valor de entrada quando produto, plano ou comissão mudar
+  useEffect(() => {
+    if (produtoSelecionado && parametros) {
+      const precoFinal = calcularPrecoFinal();
+      const entradaPadrao = precoFinal * 0.30;
+      setEntradaValor(entradaPadrao);
+    }
+  }, [produtoSelecionado, planoEscolhido, comissaoEscolhida, parametros]);
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -195,7 +205,7 @@ const CriarProposta = () => {
     if (!produtoSelecionado || !parametros) return null;
 
     const precoFinal = calcularPrecoFinal();
-    const entrada = precoFinal * 0.30; // Entrada sempre 30%
+    const entrada = entradaValor; // Usar valor editável da entrada
     const valorFinanciado = precoFinal - entrada;
     
     // Selecionar a taxa de juros baseada no número de parcelas
@@ -317,7 +327,7 @@ const CriarProposta = () => {
         parcela_valor: financiamento.parcelaValor,
         valor_da_parcela: financiamento.parcelaValor,
         total_financiado: financiamento.totalFinanciado,
-        percentual_entrada_utilizado: 0.30,
+        percentual_entrada_utilizado: entradaValor / financiamento.precoFinal,
         juros_parcelamento_mensal_usado: financiamento.jurosMensal,
       };
     }
@@ -516,6 +526,22 @@ const CriarProposta = () => {
                           {financiamento && (
                             <>
                               <div className="grid gap-2">
+                                <Label htmlFor="entrada-valor">Valor de Entrada</Label>
+                                <Input
+                                  id="entrada-valor"
+                                  type="number"
+                                  step="0.01"
+                                  value={entradaValor}
+                                  onChange={(e) => setEntradaValor(parseFloat(e.target.value) || 0)}
+                                  min={0}
+                                  max={financiamento.precoFinal}
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                  {((entradaValor / financiamento.precoFinal) * 100).toFixed(1)}% do valor total
+                                </p>
+                              </div>
+
+                              <div className="grid gap-2">
                                 <Label htmlFor="num-parcelas">Número de Parcelas</Label>
                                 <Select value={numeroParcelas.toString()} onValueChange={(v) => setNumeroParcelas(parseInt(v) as 12 | 18 | 24)}>
                                   <SelectTrigger>
@@ -531,7 +557,7 @@ const CriarProposta = () => {
                               
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                  <p className="text-sm text-muted-foreground">Entrada (30%)</p>
+                                  <p className="text-sm text-muted-foreground">Entrada ({((entradaValor / financiamento.precoFinal) * 100).toFixed(1)}%)</p>
                                   <p className="text-2xl font-bold text-primary">
                                     {formatCurrency(financiamento.entrada)}
                                   </p>
