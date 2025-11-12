@@ -125,7 +125,7 @@ const CriarProposta = () => {
   const [clienteEmail, setClienteEmail] = useState("");
   const [planoEscolhido, setPlanoEscolhido] = useState<"30" | "40" | "50">("40");
   const [comissaoEscolhida, setComissaoEscolhida] = useState<"0.005" | "0.01" | "0.015">("0.01");
-  const [numeroParcelas, setNumeroParcelas] = useState<12 | 18 | 24>(24);
+  const [numeroParcelas, setNumeroParcelas] = useState<number>(24);
   const [parcelasCartaoSelecionadas, setParcelasCartaoSelecionadas] = useState<number>(1);
   const [entradaValor, setEntradaValor] = useState<number>(0);
   const [loading, setLoading] = useState(false);
@@ -209,13 +209,13 @@ const CriarProposta = () => {
     const valorFinanciado = precoFinal - entrada;
     
     // Selecionar a taxa de juros baseada no número de parcelas
-    let jurosMensal = parametros.juros_parcelamento_mensal;
-    if (numeroParcelas === 12) {
-      jurosMensal = parametros.juros_12x_percentual;
-    } else if (numeroParcelas === 18) {
-      jurosMensal = parametros.juros_18x_percentual;
-    } else if (numeroParcelas === 24) {
-      jurosMensal = parametros.juros_24x_percentual;
+    let jurosMensal = 0.0499; // 4,99% para 1-12x
+    if (numeroParcelas >= 1 && numeroParcelas <= 12) {
+      jurosMensal = 0.0499; // 4,99% ao mês
+    } else if (numeroParcelas >= 13 && numeroParcelas <= 18) {
+      jurosMensal = 0.0599; // 5,99% ao mês
+    } else if (numeroParcelas >= 19 && numeroParcelas <= 24) {
+      jurosMensal = 0.0699; // 6,99% ao mês
     }
 
     // Cálculo com juros compostos
@@ -543,14 +543,22 @@ const CriarProposta = () => {
 
                               <div className="grid gap-2">
                                 <Label htmlFor="num-parcelas">Número de Parcelas</Label>
-                                <Select value={numeroParcelas.toString()} onValueChange={(v) => setNumeroParcelas(parseInt(v) as 12 | 18 | 24)}>
+                                <Select value={numeroParcelas.toString()} onValueChange={(v) => setNumeroParcelas(parseInt(v))}>
                                   <SelectTrigger>
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="12">12x - Taxa {(parametros.juros_12x_percentual * 100).toFixed(2)}% a.m.</SelectItem>
-                                    <SelectItem value="18">18x - Taxa {(parametros.juros_18x_percentual * 100).toFixed(2)}% a.m.</SelectItem>
-                                    <SelectItem value="24">24x - Taxa {(parametros.juros_24x_percentual * 100).toFixed(2)}% a.m.</SelectItem>
+                                    {Array.from({ length: 24 }, (_, i) => i + 1).map((num) => {
+                                      let taxa = 4.99;
+                                      if (num >= 1 && num <= 12) taxa = 4.99;
+                                      else if (num >= 13 && num <= 18) taxa = 5.99;
+                                      else if (num >= 19 && num <= 24) taxa = 6.99;
+                                      return (
+                                        <SelectItem key={num} value={num.toString()}>
+                                          {num}x - Taxa {taxa}% a.m.
+                                        </SelectItem>
+                                      );
+                                    })}
                                   </SelectContent>
                                 </Select>
                               </div>
