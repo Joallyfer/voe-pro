@@ -529,12 +529,17 @@ const CriarProposta = () => {
                                 <Label htmlFor="entrada-valor">Valor de Entrada</Label>
                                 <Input
                                   id="entrada-valor"
-                                  type="number"
-                                  step="0.01"
-                                  value={entradaValor}
-                                  onChange={(e) => setEntradaValor(parseFloat(e.target.value) || 0)}
-                                  min={0}
-                                  max={financiamento.precoFinal}
+                                  type="text"
+                                  value={entradaValor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  onChange={(e) => {
+                                    const rawValue = e.target.value.replace(/\./g, '').replace(',', '.');
+                                    const parsed = parseFloat(rawValue);
+                                    if (!isNaN(parsed)) {
+                                      setEntradaValor(parsed);
+                                    } else if (e.target.value === '' || e.target.value === '0') {
+                                      setEntradaValor(0);
+                                    }
+                                  }}
                                 />
                                 <p className="text-xs text-muted-foreground">
                                   {((entradaValor / financiamento.precoFinal) * 100).toFixed(1)}% do valor total
