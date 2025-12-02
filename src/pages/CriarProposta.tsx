@@ -128,6 +128,7 @@ const CriarProposta = () => {
   const [numeroParcelas, setNumeroParcelas] = useState<number>(24);
   const [parcelasCartaoSelecionadas, setParcelasCartaoSelecionadas] = useState<number>(1);
   const [entradaValor, setEntradaValor] = useState<number>(0);
+  const [valorAVista, setValorAVista] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -307,14 +308,15 @@ const CriarProposta = () => {
         juros_parcelamento_mensal_usado: 0,
       };
     } else if (tipoPagamento === "avista") {
+      const valorFinalAVista = valorAVista > 0 ? valorAVista : financiamento.precoFinal;
       dadosParaProposta = {
-        entrada_valor: financiamento.precoFinal,
-        entrada_reais: financiamento.precoFinal,
+        entrada_valor: valorFinalAVista,
+        entrada_reais: valorFinalAVista,
         numero_de_parcelas: 1,
         parcelas_qtd: 1,
-        parcela_valor: financiamento.precoFinal,
-        valor_da_parcela: financiamento.precoFinal,
-        total_financiado: financiamento.precoFinal,
+        parcela_valor: valorFinalAVista,
+        valor_da_parcela: valorFinalAVista,
+        total_financiado: valorFinalAVista,
         percentual_entrada_utilizado: 1,
         juros_parcelamento_mensal_usado: 0,
       };
@@ -661,13 +663,25 @@ const CriarProposta = () => {
                         <TabsContent value="avista" className="space-y-4">
                           {financiamento && (
                             <>
-                              <div className="text-center py-8">
-                                <p className="text-sm text-muted-foreground mb-2">Valor À Vista</p>
-                                <p className="text-4xl font-bold text-primary mb-4">
-                                  {formatCurrency(financiamento.precoFinal)}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  Pagamento em uma única parcela
+                              <div className="grid gap-2">
+                                <Label htmlFor="valor-avista">Valor À Vista</Label>
+                                <Input
+                                  id="valor-avista"
+                                  type="text"
+                                  value={(valorAVista > 0 ? valorAVista : financiamento.precoFinal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  onChange={(e) => {
+                                    const rawValue = e.target.value.replace(/\./g, '').replace(',', '.');
+                                    const parsed = parseFloat(rawValue);
+                                    if (!isNaN(parsed)) {
+                                      setValorAVista(parsed);
+                                    } else if (e.target.value === '' || e.target.value === '0') {
+                                      setValorAVista(0);
+                                    }
+                                  }}
+                                  className="text-center text-2xl font-bold"
+                                />
+                                <p className="text-xs text-muted-foreground text-center">
+                                  Valor sugerido: {formatCurrency(financiamento.precoFinal)}
                                 </p>
                               </div>
                               
@@ -684,7 +698,7 @@ const CriarProposta = () => {
                                   </div>
                                   <div className="flex justify-between">
                                     <span>Valor Total:</span>
-                                    <span className="font-semibold text-primary">{formatCurrency(financiamento.precoFinal)}</span>
+                                    <span className="font-semibold text-primary">{formatCurrency(valorAVista > 0 ? valorAVista : financiamento.precoFinal)}</span>
                                   </div>
                                 </div>
                               </div>
