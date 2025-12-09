@@ -128,6 +128,7 @@ const CriarProposta = () => {
   const [numeroParcelas, setNumeroParcelas] = useState<number>(24);
   const [parcelasCartaoSelecionadas, setParcelasCartaoSelecionadas] = useState<number>(1);
   const [entradaValor, setEntradaValor] = useState<number>(0);
+  const [entradaCartao, setEntradaCartao] = useState<number>(0);
   const [valorAVista, setValorAVista] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
@@ -235,10 +236,11 @@ const CriarProposta = () => {
     };
   };
 
-  const calcularCartao = () => {
+  const calcularCartao = (entradaCartaoValor: number = 0) => {
     if (!parametros) return [];
 
     const precoFinal = calcularPrecoFinal();
+    const valorAParcelar = precoFinal - entradaCartaoValor;
     const opcoes = [];
     for (let i = 1; i <= 24; i++) {
       const taxaCustoKey = `taxa_custo_empresa_${i}x` as keyof ParametrosGlobais;
@@ -246,17 +248,19 @@ const CriarProposta = () => {
       const taxaCusto = parametros[taxaCustoKey] as number;
       const taxaCliente = parametros[taxaClienteKey] as number;
       
-      const valorLiquidoEmpresa = precoFinal * (1 - taxaCusto);
-      const valorTotalCliente = precoFinal * (1 + taxaCliente);
-      const parcelaCartao = valorTotalCliente / i;
+      const valorLiquidoEmpresa = valorAParcelar * (1 - taxaCusto);
+      const valorTotalParcelado = valorAParcelar * (1 + taxaCliente);
+      const parcelaCartao = valorTotalParcelado / i;
       
       opcoes.push({
         parcelas: i,
         valorParcela: parcelaCartao,
-        valorTotal: valorTotalCliente,
+        valorTotal: valorTotalParcelado + entradaCartaoValor,
+        valorParcelado: valorTotalParcelado,
         valorLiquidoEmpresa,
         taxaCustoEmpresa: taxaCusto,
         taxaRepassadaCliente: taxaCliente,
+        entrada: entradaCartaoValor,
       });
     }
     return opcoes;
@@ -297,14 +301,14 @@ const CriarProposta = () => {
       if (!opcaoCartao) return;
       
       dadosParaProposta = {
-        entrada_valor: 0,
-        entrada_reais: 0,
+        entrada_valor: entradaCartao,
+        entrada_reais: entradaCartao,
         numero_de_parcelas: opcaoCartao.parcelas,
         parcelas_qtd: opcaoCartao.parcelas,
         parcela_valor: opcaoCartao.valorParcela,
         valor_da_parcela: opcaoCartao.valorParcela,
         total_financiado: opcaoCartao.valorTotal,
-        percentual_entrada_utilizado: 0,
+        percentual_entrada_utilizado: entradaCartao / financiamento.precoFinal,
         juros_parcelamento_mensal_usado: 0,
       };
     } else if (tipoPagamento === "avista") {
@@ -389,7 +393,7 @@ const CriarProposta = () => {
   };
 
   const financiamento = calcularFinanciamento();
-  const opcoesCartao = calcularCartao();
+  const opcoesCartao = calcularCartao(entradaCartao);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-card">
@@ -609,55 +613,91 @@ const CriarProposta = () => {
                           )}
                         </TabsContent>
 
-                        <TabsContent value="cartao" className="space-y-2">
-                          <div className="grid gap-2 max-h-96 overflow-y-auto">
-                            {opcoesCartao.map((opcao) => (
-                              <div 
-                                key={opcao.parcelas}
-                                onClick={() => setParcelasCartaoSelecionadas(opcao.parcelas)}
-                                className={`p-3 rounded-lg cursor-pointer transition-all ${
-                                  parcelasCartaoSelecionadas === opcao.parcelas
-                                    ? "bg-primary/20 border-2 border-primary"
-                                    : "bg-background border border-border hover:border-primary"
-                                }`}
-                              >
-                                <div className="flex justify-between items-center mb-2">
-                                  <span className="font-medium text-lg">{opcao.parcelas}x</span>
-                                  <div className="text-right">
-                                    <p className="font-bold text-lg">{formatCurrency(opcao.valorParcela)}</p>
-                                    <p className="text-xs text-muted-foreground">
-                                      Total: {formatCurrency(opcao.valorTotal)}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-border/50">
-                                  <div>
-                                    <p className="text-muted-foreground">Taxa Empresa</p>
-                                    <p className="font-semibold">{(opcao.taxaCustoEmpresa * 100).toFixed(2)}%</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-muted-foreground">Líquido Empresa</p>
-                                    <p className="font-semibold text-primary">{formatCurrency(opcao.valorLiquidoEmpresa)}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-muted-foreground">Taxa Cliente</p>
-                                    <p className="font-semibold">{(opcao.taxaRepassadaCliente * 100).toFixed(2)}%</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-muted-foreground">Total Cliente</p>
-                                    <p className="font-semibold">{formatCurrency(opcao.valorTotal)}</p>
-                                  </div>
-                                </div>
+                        <TabsContent value="cartao" className="space-y-4">
+                          {financiamento && (
+                            <>
+                              <div className="grid gap-2">
+                                <Label htmlFor="entrada-cartao">Valor de Entrada (opcional)</Label>
+                                <Input
+                                  id="entrada-cartao"
+                                  type="text"
+                                  value={entradaCartao.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  onChange={(e) => {
+                                    const rawValue = e.target.value.replace(/\./g, '').replace(',', '.');
+                                    const parsed = parseFloat(rawValue);
+                                    if (!isNaN(parsed)) {
+                                      setEntradaCartao(Math.min(parsed, financiamento.precoFinal));
+                                    } else if (e.target.value === '' || e.target.value === '0') {
+                                      setEntradaCartao(0);
+                                    }
+                                  }}
+                                  placeholder="0,00"
+                                />
+                                {entradaCartao > 0 && (
+                                  <p className="text-xs text-muted-foreground">
+                                    {((entradaCartao / financiamento.precoFinal) * 100).toFixed(1)}% do valor total • 
+                                    Restante a parcelar: {formatCurrency(financiamento.precoFinal - entradaCartao)}
+                                  </p>
+                                )}
                               </div>
-                            ))}
-                          </div>
-                          <Button 
-                            className="w-full mt-4" 
-                            onClick={(e) => handleSubmit(e, "cartao")}
-                            disabled={loading || !clienteNome}
-                          >
-                            {loading ? "Gerando..." : `Gerar Proposta ${parcelasCartaoSelecionadas}x no Cartão`}
-                          </Button>
+
+                              <div className="grid gap-2 max-h-80 overflow-y-auto">
+                                {opcoesCartao.map((opcao) => (
+                                  <div 
+                                    key={opcao.parcelas}
+                                    onClick={() => setParcelasCartaoSelecionadas(opcao.parcelas)}
+                                    className={`p-3 rounded-lg cursor-pointer transition-all ${
+                                      parcelasCartaoSelecionadas === opcao.parcelas
+                                        ? "bg-primary/20 border-2 border-primary"
+                                        : "bg-background border border-border hover:border-primary"
+                                    }`}
+                                  >
+                                    <div className="flex justify-between items-center mb-2">
+                                      <span className="font-medium text-lg">{opcao.parcelas}x</span>
+                                      <div className="text-right">
+                                        <p className="font-bold text-lg">{formatCurrency(opcao.valorParcela)}</p>
+                                        <p className="text-xs text-muted-foreground">
+                                          {entradaCartao > 0 ? (
+                                            <>Entrada: {formatCurrency(entradaCartao)} + Parcelado: {formatCurrency(opcao.valorParcelado)}</>
+                                          ) : (
+                                            <>Total: {formatCurrency(opcao.valorTotal)}</>
+                                          )}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-border/50">
+                                      <div>
+                                        <p className="text-muted-foreground">Taxa Empresa</p>
+                                        <p className="font-semibold">{(opcao.taxaCustoEmpresa * 100).toFixed(2)}%</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-muted-foreground">Líquido Empresa</p>
+                                        <p className="font-semibold text-primary">{formatCurrency(opcao.valorLiquidoEmpresa + entradaCartao)}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-muted-foreground">Taxa Cliente</p>
+                                        <p className="font-semibold">{(opcao.taxaRepassadaCliente * 100).toFixed(2)}%</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-muted-foreground">Total Cliente</p>
+                                        <p className="font-semibold">{formatCurrency(opcao.valorTotal)}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                              <Button 
+                                className="w-full mt-4" 
+                                onClick={(e) => handleSubmit(e, "cartao")}
+                                disabled={loading || !clienteNome}
+                              >
+                                {loading ? "Gerando..." : entradaCartao > 0 
+                                  ? `Gerar Proposta: Entrada + ${parcelasCartaoSelecionadas}x no Cartão`
+                                  : `Gerar Proposta ${parcelasCartaoSelecionadas}x no Cartão`
+                                }
+                              </Button>
+                            </>
+                          )}
                         </TabsContent>
 
                         <TabsContent value="avista" className="space-y-4">
